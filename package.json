@@ -1,0 +1,19 @@
+{
+  "name": "@alicarti/root",
+  "module": "x",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "workspaces": [
+    "be",
+    "web",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "bun --filter '*' dev"
+  }
+}
