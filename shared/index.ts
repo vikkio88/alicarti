@@ -1,13 +1,19 @@
 const MessageTypes = {
   setup: "setup",
-  message: "",
+  error: "error",
+  unknown: "unknown",
+  
+  message: "message",
 } as const;
 
 export type MessageType = keyof typeof MessageTypes;
 
-export type WsMessage = {
+export type WsMessage<T> = {
   type: MessageType;
-  payload: any;
+  payload: T;
+} | {
+  type: "error";
+  error: string;
 };
 
 
