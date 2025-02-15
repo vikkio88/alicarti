@@ -3,6 +3,7 @@ const MessageTypes = {
   error: "error",
   unknown: "unknown",
   
+  state_update: "state_update",
   message: "message",
 } as const;
 
