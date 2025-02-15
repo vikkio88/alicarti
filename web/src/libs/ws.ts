@@ -2,33 +2,35 @@ import type { Client, WsMessage } from "@alicarti/shared";
 
 export type WsEventListener = (ev: MessageEvent<any>) => void;
 export type WsEvents = "message";
-let ws: WebSocket | null = null;
-let connectionInfo: Client | null = null;
 let eventListeners: Record<WsEvents, WsEventListener | null> = {
   message: null,
+};
+let ws: WebSocket | null = null;
+let connectionInfo: Client | null = null;
+
+export const setupHandler = (e: MessageEvent) => {
+  const message = parseMessage<Client>(e.data);
+  if (isError(message)) {
+    ws?.close();
+    return;
+  }
+
+  if (message.type === "setup") {
+    connectionInfo = message.payload;
+  }
 };
 
 export const connection = {
   info() {
     return connectionInfo;
   },
-  open(onMessage: WsEventListener = console.log) {
+  open() {
     if (ws) return ws;
 
     ws = new WebSocket("http://localhost:3000");
-    ws.addEventListener("message", (e) => {
-      const message = parseMessage<Client>(e.data);
-      if (isError(message)) {
-        ws?.close();
-        return;
-      }
 
-      connectionInfo = message.payload;
-      if (ws) {
-        ws.onmessage = onMessage;
-        eventListeners.message = onMessage;
-      }
-    });
+    ws.addEventListener("message", setupHandler);
+    eventListeners.message = setupHandler;
 
     return ws;
   },

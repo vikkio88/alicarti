@@ -1,10 +1,12 @@
 import type { Client } from "@alicarti/shared";
 import type { WebSocketHandler } from "bun";
 import { ulid } from "ulid";
+import { sendMessage } from "../libs/messages";
 
 export const websocketServe: WebSocketHandler<Client> = {
   async message(ws, message) {
-    ws.send(`${ws.data.socketId}: ${message}`);
+    console.log(`msg: ${JSON.stringify(message)}`);
+    sendMessage(ws, `${ws.data.socketId}: ${message}`);
   },
   async open(ws) {
     console.log("a client connected", ws.data.socketId);

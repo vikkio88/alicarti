@@ -1,6 +1,15 @@
 <script lang="ts">
+  import type { WsMessage } from "@alicarti/shared";
   import { connection } from "../libs/ws";
-  connection.replaceEventListener("message", (e) => messages.push(e.data));
+
+  connection.replaceEventListener("message", (e) => {
+    console.log(e.data.type);
+    //TODO: need to parse it
+    const message = e.data as WsMessage<string>;
+    if (message.type === "message") {
+      messages.push(message.payload);
+    }
+  });
 
   let message = $state("");
   let messages: string[] = $state([]);

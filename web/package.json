@@ -1,14 +1,6 @@
 {
   "name": "@alicarti/web",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "bunx --bun vite",
-    "build": "bunx --bun vite build",
-    "preview": "bunx --bun vite preview",
-    "check": "bunx --bun svelte-check --tsconfig ./tsconfig.app.json && bunx --bun tsc -p tsconfig.node.json"
-  },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@tsconfig/svelte": "^5.0.4",
@@ -17,7 +9,12 @@
     "typescript": "~5.7.2",
     "vite": "^6.1.0"
   },
-  "dependencies": {
-    "@alicarti/shared": "../shared"
-  }
+  "private": true,
+  "scripts": {
+    "dev": "bunx --bun vite",
+    "build": "bunx --bun vite build",
+    "preview": "bunx --bun vite preview",
+    "check": "bunx --bun svelte-check --tsconfig ./tsconfig.app.json && bunx --bun tsc -p tsconfig.node.json"
+  },
+  "type": "module"
 }

@@ -1,4 +1,5 @@
-import type { WsMessage } from "@alicarti/shared";
+import type { Client, WsMessage } from "@alicarti/shared";
+import type { ServerWebSocket } from "bun";
 
 export function toString<T>(message: WsMessage<T>): string {
   try {
@@ -9,6 +10,10 @@ export function toString<T>(message: WsMessage<T>): string {
   }
 }
 
-export function sendStateUpdate<T>(ws: WebSocket, state: T) {
+export function sendStateUpdate<T>(ws: ServerWebSocket<Client>, state: T) {
   ws.send(toString({ type: "state_update", payload: state }));
+}
+
+export function sendMessage<T>(ws: ServerWebSocket<Client>, message: T) {
+  ws.send(toString({ type: "message", payload: message }));
 }

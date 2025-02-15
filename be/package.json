@@ -9,7 +9,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@alicarti/shared": "../shared",
     "ulid": "^2.3.0"
   },
   "scripts": {
