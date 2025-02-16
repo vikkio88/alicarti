@@ -47,9 +47,15 @@ export const connection = {
       //TODO: maybe add a bool return
       return;
     }
-
     ws.removeEventListener(event, eventListeners[event]);
     ws.addEventListener(event, listener);
+    eventListeners[event] = listener;
+  },
+  setMessageHandler<T>(handler: (m: WsMessage<T>) => void) {
+    this.replaceEventListener("message", (ev) => {
+      const message = parseMessage(ev.data) as WsMessage<T>;
+      handler(message);
+    });
   },
 };
 
