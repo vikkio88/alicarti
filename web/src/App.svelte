@@ -3,11 +3,10 @@
   import ChatForm from "./components/ChatForm.svelte";
   import { connection } from "./libs/ws";
 
-  const connect = () => {
-    connection.open();
-    isConnected = true;
-  };
   let isConnected = $state(false);
+  const connect = () => {
+    connection.open(() => (isConnected = true));
+  };
 
   onMount(() => () => connection.close());
 </script>
@@ -15,7 +14,7 @@
 <main>
   <h1>Alicarti Web</h1>
   {#if isConnected}
-    <ChatForm />
+    <ChatForm onClose={() => (isConnected = false)} />
   {:else}
     <button onclick={connect}>Connect</button>
   {/if}

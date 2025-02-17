@@ -1,0 +1,28 @@
+{
+  "output": "public/style.css",
+  "vars": {
+    "DARK": "#0C1120",
+    "LIGHT": "#fbfcfe",
+    "DARK_FAINT": "#2e2e2e",
+    "LIGHT_FAINT": "#DFE0E0",
+    "PRIMARY": "#2C4D90",
+    "PRIMARY_1": "#73C2BE",
+    "SECONDARY": "#3282E0",
+    "SECONDARY_1": "#B5F44A",
+    "ACCENT": "#646cff",
+    "ACCENT_1": "#4b52cc",
+    "ACCENT_FAINT": "#b0b4ff",
+    "DANGER": "#db3a34",
+    "DANGER_1": "#a12b28",
+    "DANGER_FAINT": "#f4a3a0",
+    "WARNING": "#ed9b40",
+    "WARNING_1": "#b37932",
+    "WARNING_FAINT": "#f4cf9a",
+    "SUCCESS": "#3bceac",
+    "SUCCESS_1": "#2b997e",
+    "SUCCESS_FAINT": "#a3e3d4"
+  },
+  "config": {
+    "animations": true
+  }
+}

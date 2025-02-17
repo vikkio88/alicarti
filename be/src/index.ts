@@ -1,6 +1,6 @@
 import type { Client } from "@alicarti/shared";
 import { staticServe } from "./servers/static";
-import { websocketServe, websocketUpgrade } from "./servers/websocket";
+import { websocketServe, websocketUpgrade, type WsServerConfig } from "./servers/websocket";
 
 const CORS_HEADERS = {
   headers: {
@@ -10,9 +10,13 @@ const CORS_HEADERS = {
   },
 };
 
+const wsConfig: WsServerConfig = {
+  log: (message: string) => console.log(`[server] ${Date.now()} - ${message}`),
+};
+
 const server = Bun.serve<Client>({
   static: staticServe,
-  websocket: websocketServe,
+  websocket: websocketServe(wsConfig),
 
   async fetch(req, server) {
     // Handle CORS preflight requests

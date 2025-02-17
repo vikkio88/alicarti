@@ -1,22 +1,35 @@
 import type { Client } from "@alicarti/shared";
 import type { WebSocketHandler } from "bun";
 import { ulid } from "ulid";
-import { sendMessage } from "../libs/messages";
+import { message, setup, stateUpdate } from "../libs/messages";
+let clients: string[] = [];
 
-export const websocketServe: WebSocketHandler<Client> = {
-  async message(ws, message) {
-    console.log(`msg: ${JSON.stringify(message)}`);
-    sendMessage(ws, `${ws.data.socketId}: ${message}`);
-  },
-  async open(ws) {
-    console.log("a client connected", ws.data.socketId);
-    ws.send(JSON.stringify({ type: "setup", payload: { ...ws.data } }));
-    ws.subscribe("all");
-  },
-  async close(ws) {
-    console.log("a client disconnected", ws.data.socketId);
-    ws.unsubscribe("all");
-  },
+export type WsServerConfig = {
+  log: (...strings: string[]) => void;
+};
+
+export const websocketServe = ({
+  log = console.log,
+}: WsServerConfig): WebSocketHandler<Client> => {
+  return {
+    async message(ws, msg) {
+      log(`received message from ${ws.data.socketId}`);
+      ws.send(message(`${ws.data.socketId}: ${msg}`));
+    },
+    async open(ws) {
+      log(`client connected: ${ws.data.socketId}`);
+      clients.push(ws.data.socketId);
+      ws.subscribe("all");
+      ws.send(setup({ ...ws.data }, { loggedIn: clients.length }));
+      ws.publish("all", stateUpdate({ loggedIn: clients.length }));
+    },
+    async close(ws) {
+      log(`client disconnected: ${ws.data.socketId}`);
+      clients = clients.filter((c) => c != ws.data.socketId);
+      ws.unsubscribe("all");
+      ws.publish("all", stateUpdate({ loggedIn: clients.length }));
+    },
+  };
 };
 
 export function websocketUpgrade(): { data: Client } {
