@@ -2,13 +2,13 @@ import type { Client } from "@alicarti/shared";
 import type { WebSocketHandler } from "bun";
 import { ulid } from "ulid";
 import { message, setup, stateUpdate } from "../libs/messages";
-import { Topic } from "../libs/Topic";
+import { Topic, TopicManager } from "../libs/Topic";
+import { ClientsManager } from "../libs/ClientsManager";
 
-// let clients: Record<string, (keyof typeof topics)[]> = {};
+const clientsManager = new ClientsManager();
 
-const topics: Record<string, Topic> = {
-  everyone: new Topic("everyone", false),
-};
+const topicsManager = new TopicManager([new Topic("everyone")]);
+const everyoneTopic = topicsManager.byName("everyone")!;
 
 export type WsServerConfig = {
   log: (...strings: string[]) => void;
@@ -24,21 +24,21 @@ export const websocketServe = ({
     },
     async open(ws) {
       log(`client connected: ${ws.data.socketId}`);
-      topics.everyone.subscribe(ws);
-      ws.send(
-        setup({ ...ws.data }, { loggedIn: topics.everyone.clientsCount })
-      );
-      topics.everyone.publish(
+      clientsManager.onConnect(ws);
+      clientsManager.joinTopic(everyoneTopic, ws);
+      ws.send(setup({ ...ws.data }, { loggedIn: clientsManager.clientsCount }));
+      everyoneTopic.publish(
         ws,
-        stateUpdate({ loggedIn: topics.everyone.clientsCount })
+        stateUpdate({ loggedIn: clientsManager.clientsCount })
       );
     },
     async close(ws) {
       log(`client disconnected: ${ws.data.socketId}`);
-      topics.everyone.unsubscribe(ws);
-      topics.everyone.publish(
+      clientsManager.leaveTopic(everyoneTopic, ws);
+      clientsManager.onDisconnect(ws);
+      everyoneTopic.publish(
         ws,
-        stateUpdate({ loggedIn: topics.everyone.clientsCount })
+        stateUpdate({ loggedIn: clientsManager.clientsCount })
       );
     },
   };
