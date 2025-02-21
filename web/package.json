@@ -1,6 +1,9 @@
 {
   "name": "@alicarti/web",
   "version": "0.0.0",
+  "dependencies": {
+    "@alicarti/shared": "workspace:*"
+  },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@tsconfig/svelte": "^5.0.4",

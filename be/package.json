@@ -9,7 +9,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "ulid": "^2.3.0"
+    "ulid": "^2.3.0",
+    "@alicarti/shared": "workspace:*"
   },
   "scripts": {
     "dev": "bun run --watch ./src/index.ts"

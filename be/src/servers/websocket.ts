@@ -1,7 +1,7 @@
-import type { Client } from "@alicarti/shared";
 import type { WebSocketHandler } from "bun";
 import { ulid } from "ulid";
-import { message, setup, stateUpdate } from "../libs/messages";
+import type { Client } from "@alicarti/shared";
+import { message, setup, stateUpdate } from "@alicarti/shared";
 import { Topic, TopicManager } from "../libs/Topic";
 import { ClientsManager } from "../libs/ClientsManager";
 
