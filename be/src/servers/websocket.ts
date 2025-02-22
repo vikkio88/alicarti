@@ -1,9 +1,13 @@
 import type { WebSocketHandler } from "bun";
 import { ulid } from "ulid";
-import type { Client } from "@alicarti/shared";
-import { message, setup, stateUpdate } from "@alicarti/shared";
+import type { Client, Command } from "@alicarti/shared";
+import { setup, stateUpdate } from "@alicarti/shared";
 import { Topic, TopicManager } from "../libs/Topic";
 import { ClientsManager } from "../libs/ClientsManager";
+
+const availableCommands: Command[] = [
+  { name: "create_room", description: "Create a room" },
+];
 
 const clientsManager = new ClientsManager();
 
@@ -49,7 +53,8 @@ export function websocketUpgrade(): { data: Client } {
   return {
     data: {
       createdAt: Date.now(),
-      socketId
+      socketId,
+      availableCommands,
     },
   };
 }

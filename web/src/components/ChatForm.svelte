@@ -46,6 +46,15 @@
   <button disabled={!message || message.length < 2}>Send</button>
 </form>
 <ul>
+  {#each connection.info().connection?.availableCommands ?? [] as cmd}
+    <li>
+      <button onclick={() => console.log(cmd.name)}>{cmd.description}</button>
+    </li>
+  {:else}
+    <h2>No Commands</h2>
+  {/each}
+</ul>
+<ul>
   {#each messages as m}
     <li>{m}</li>
   {/each}

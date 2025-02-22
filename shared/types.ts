@@ -36,7 +36,7 @@ export type CommandPayload<T> = {
   payload?: T;
 };
 
-type Command = {
+export type Command = {
   name: string;
   description: string;
 };
@@ -44,4 +44,5 @@ type Command = {
 export type Client = {
   createdAt: number;
   socketId: string;
+  availableCommands: Command[];
 };
