@@ -1,4 +1,4 @@
-import type { Client, SetupPayload, WsMessage } from "./index";
+import type { Client, CommandPayload, WsMessage } from "./index";
 
 export function toString<T>(message: WsMessage<T>): string {
   try {
@@ -24,10 +24,10 @@ export function message<T>(payload: T) {
   return toString({ type: "message", payload });
 }
 
-export function cmd<T>(payload: T) {
+export function cmd<T>(payload: CommandPayload<T>) {
   return toString({ type: "command", payload });
 }
 
-export function cmdResult<T>(payload: T) {
+export function cmdResult<T>(payload: CommandPayload<T>) {
   return toString({ type: "command_result", payload });
 }

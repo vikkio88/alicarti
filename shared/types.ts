@@ -32,8 +32,8 @@ const MessageTypes = {
   
   export type CommandPayload<T> = {
     command: string;
-    success: boolean;
-    payload: T;
+    success?: boolean;
+    payload?: T;
   };
   
   export type Client = {

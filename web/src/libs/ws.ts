@@ -1,4 +1,11 @@
-import type { Client, SetupPayload, WsMessage } from "@alicarti/shared";
+import {
+  cmd,
+  type Client,
+  type SetupPayload,
+  type WsMessage,
+} from "@alicarti/shared";
+
+const WS_SERVER_URL = "http://localhost:3000";
 
 export type WsEventListener = (ev: MessageEvent<any>) => void;
 export type WsEvents = "message";
@@ -26,7 +33,7 @@ export const connection = {
   open(callback: () => void = () => {}) {
     if (ws) return ws;
 
-    ws = new WebSocket("http://localhost:3000");
+    ws = new WebSocket(WS_SERVER_URL);
     const setup = (ev: MessageEvent<any>) => {
       setupHandler(ev);
       callback();
@@ -42,6 +49,9 @@ export const connection = {
   },
   message(msg: string) {
     ws?.send(msg);
+  },
+  command<T>(name: string, payload: T) {
+    ws?.send(cmd({ command: name, payload }));
   },
   replaceEventListener(event: WsEvents, listener: WsEventListener) {
     if (!ws) {
