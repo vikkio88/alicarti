@@ -20,7 +20,7 @@ export const websocketServe = ({
   return {
     async message(ws, msg) {
       log(`received message from ${ws.data.socketId}`);
-      ws.send(message(`${ws.data.socketId}: ${msg}`));
+      // parseM
     },
     async open(ws) {
       log(`client connected: ${ws.data.socketId}`);
@@ -45,10 +45,11 @@ export const websocketServe = ({
 };
 
 export function websocketUpgrade(): { data: Client } {
+  const socketId = ulid().toString();
   return {
     data: {
       createdAt: Date.now(),
-      socketId: ulid().toString(),
+      socketId
     },
   };
 }

@@ -4,6 +4,7 @@ import type { Topic } from "./Topic";
 
 export class ClientsManager {
   #clients: Record<string, string[]>;
+
   constructor() {
     this.#clients = {};
   }

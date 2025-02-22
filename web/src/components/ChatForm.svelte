@@ -31,6 +31,7 @@
 </script>
 
 <div class="f r g_5 pd">
+  {connection.info().connection?.socketId}
   <button class="small" onclick={disconnect}>❌</button>
   <h2>online: {chatState.loggedIn}</h2>
 </div>

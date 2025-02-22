@@ -1,7 +1,9 @@
 import {
   cmd,
+  parseMessage,
+  isErrorMessage,
+  isSetupMessage,
   type Client,
-  type SetupPayload,
   type WsMessage,
 } from "@alicarti/shared";
 
@@ -15,12 +17,12 @@ let initialState: any = undefined;
 
 export const setupHandler = (e: MessageEvent) => {
   const message = parseMessage(e.data);
-  if (isError(message)) {
+  if (isErrorMessage(message)) {
     ws?.close();
     return;
   }
 
-  if (isSetup(message)) {
+  if (isSetupMessage(message)) {
     connectionInfo = message.payload.setup;
     initialState = message.payload.initialState;
   }
@@ -28,7 +30,7 @@ export const setupHandler = (e: MessageEvent) => {
 
 export const connection = {
   info() {
-    return { connectionInfo, initialState };
+    return { connection: connectionInfo, initialState };
   },
   open(callback: () => void = () => {}) {
     if (ws) return ws;
@@ -75,23 +77,3 @@ export const connection = {
     });
   },
 };
-
-function parseMessage<T>(msg: string): WsMessage<T> {
-  try {
-    return JSON.parse(msg) as WsMessage<T>;
-  } catch (err) {
-    return { type: "error", error: `Could not parse message` };
-  }
-}
-
-function isError(
-  message: WsMessage<any>
-): message is { type: "error"; error: string } {
-  return message.type === "error";
-}
-
-function isSetup(
-  message: WsMessage<any>
-): message is { type: "setup"; payload: SetupPayload<any> } {
-  return message.type === "setup";
-}

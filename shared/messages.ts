@@ -1,4 +1,4 @@
-import type { Client, CommandPayload, WsMessage } from "./index";
+import type { Client, CommandPayload, SetupPayload, WsMessage } from "./index";
 
 export function toString<T>(message: WsMessage<T>): string {
   try {
@@ -30,4 +30,25 @@ export function cmd<T>(payload: CommandPayload<T>) {
 
 export function cmdResult<T>(payload: CommandPayload<T>) {
   return toString({ type: "command_result", payload });
+}
+
+
+export function parseMessage<T>(msg: string): WsMessage<T> {
+  try {
+    return JSON.parse(msg) as WsMessage<T>;
+  } catch (err) {
+    return { type: "error", error: `Could not parse message` };
+  }
+}
+
+export function isErrorMessage(
+  message: WsMessage<any>
+): message is { type: "error"; error: string } {
+  return message.type === "error";
+}
+
+export function isSetupMessage(
+  message: WsMessage<any>
+): message is { type: "setup"; payload: SetupPayload<any> } {
+  return message.type === "setup";
 }
