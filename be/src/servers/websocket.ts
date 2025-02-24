@@ -1,13 +1,10 @@
 import type { WebSocketHandler } from "bun";
 import { ulid } from "ulid";
-import type { Client, Command } from "@alicarti/shared";
-import { setup, stateUpdate } from "@alicarti/shared";
+import type { Client } from "@alicarti/shared";
+import { parseMessage, setup, stateUpdate } from "@alicarti/shared";
 import { Topic, TopicManager } from "../libs/Topic";
 import { ClientsManager } from "../libs/ClientsManager";
-
-const availableCommands: Command[] = [
-  { name: "create_room", description: "Create a room" },
-];
+import { availableCommands, messageHandler } from "../libs/messageHandler";
 
 const clientsManager = new ClientsManager();
 
@@ -24,7 +21,11 @@ export const websocketServe = ({
   return {
     async message(ws, msg) {
       log(`received message from ${ws.data.socketId}`);
-      // parseM
+      const message = parseMessage(msg as string);
+      messageHandler(ws, message, {
+        clients: clientsManager,
+        topics: topicsManager,
+      });
     },
     async open(ws) {
       log(`client connected: ${ws.data.socketId}`);

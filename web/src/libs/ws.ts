@@ -52,7 +52,7 @@ export const connection = {
   message(msg: string) {
     ws?.send(msg);
   },
-  command<T>(name: string, payload: T) {
+  command<T>(name: string, payload?: T) {
     ws?.send(cmd({ command: name, payload }));
   },
   replaceEventListener(event: WsEvents, listener: WsEventListener) {

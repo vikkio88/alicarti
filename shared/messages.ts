@@ -52,3 +52,9 @@ export function isSetupMessage(
 ): message is { type: "setup"; payload: SetupPayload<any> } {
   return message.type === "setup";
 }
+
+export function isCommand(
+  message: WsMessage<any>
+): message is { type: "command"; payload: CommandPayload<any> } {
+  return message.type === "command";
+}
