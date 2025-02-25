@@ -33,16 +33,23 @@ export type SetupPayload<T> = {
 export type CommandPayload<T> = {
   command: string;
   success?: boolean;
-  payload?: T;
+  data?: T;
 };
 
-export type Command = {
+export type CommandInfo = {
   name: string;
   description: string;
 };
 
+export const Commands = {
+  CREATE_ROOM: "CREATE_ROOM",
+  JOIN_ROOM: "JOIN_ROOM",
+} as const;
+
+export type CommandName = typeof Commands[keyof typeof Commands];
+
 export type Client = {
   createdAt: number;
   socketId: string;
-  availableCommands: Command[];
+  availableCommands: CommandInfo[];
 };

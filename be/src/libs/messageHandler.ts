@@ -1,20 +1,17 @@
 import {
+  Commands,
   isCommand,
   type Client,
-  type Command,
+  type CommandInfo,
   type WsMessage,
 } from "@alicarti/shared";
 import type { ServerWebSocket } from "bun";
 import type { ClientsManager } from "./ClientsManager";
 import type { TopicManager } from "./Topic";
-import { handleRoomCreation } from "./commandHandlers";
-
-export const Commands = {
-  CREATE_ROOM: "create_room",
-};
-
-export const availableCommands: Command[] = [
+import { handleRoomCreation, handleRoomJoining } from "./commandHandlers";
+export const availableCommands: CommandInfo[] = [
   { name: Commands.CREATE_ROOM, description: "Create a room" },
+  { name: Commands.JOIN_ROOM, description: "Join a room" },
 ];
 
 export function messageHandler(
@@ -29,6 +26,10 @@ export function messageHandler(
     switch (message.payload.command as keyof typeof Commands) {
       case Commands.CREATE_ROOM: {
         handleRoomCreation(ws, serverContext);
+        break;
+      }
+      case Commands.JOIN_ROOM: {
+        handleRoomJoining(ws, message, serverContext);
         break;
       }
     }

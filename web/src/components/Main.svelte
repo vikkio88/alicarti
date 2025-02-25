@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { WsMessage } from "@alicarti/shared";
+  import { Commands, type WsMessage } from "@alicarti/shared";
   import { connection } from "../libs/ws";
   type Props = {
     onClose: () => void;
@@ -22,30 +22,32 @@
   };
 
   let roomId: string = $state("");
+
+  let canCreateRoom =
+    connection
+      .info()
+      .connection?.availableCommands.find(
+        (c) => c.name === Commands.CREATE_ROOM
+      ) ?? false;
 </script>
 
 <div class="f r g_5 pd">
   {connection.info().connection?.socketId}
   <button class="small" onclick={disconnect}>❌</button>
 </div>
-<ul>
-  {#each connection.info().connection?.availableCommands ?? [] as cmd}
-    <li>
-      <button onclick={() => connection.command(cmd.name)}>
-        {cmd.description}
-      </button>
-    </li>
-  {:else}
-    <h2>No Commands</h2>
-  {/each}
-</ul>
+
+<button
+  disabled={!canCreateRoom}
+  onclick={() => connection.command(Commands.CREATE_ROOM)}>Create Room</button
+>
 <div class="f rc g">
   <input type="text" bind:value={roomId} />
-  <button disabled={roomId.length < 3}>Join Room</button>
+  <button
+    disabled={roomId.length < 3}
+    onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
+    >Join Room</button
+  >
 </div>
 
 <style>
-  ul {
-    list-style: none;
-  }
 </style>
