@@ -5,6 +5,7 @@ import {
   isSetupMessage,
   type Client,
   type WsMessage,
+  type CommandPayload,
 } from "@alicarti/shared";
 
 const WS_SERVER_URL = "http://localhost:3000";
@@ -52,8 +53,8 @@ export const connection = {
   message(msg: string) {
     ws?.send(msg);
   },
-  command<T>(name: string, payload?: T) {
-    ws?.send(cmd({ command: name, payload }));
+  command<T>(name: string, data?: T) {
+    ws?.send(cmd({ command: name, data }));
   },
   replaceEventListener(event: WsEvents, listener: WsEventListener) {
     if (!ws) {

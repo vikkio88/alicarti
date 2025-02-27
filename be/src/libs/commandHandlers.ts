@@ -1,21 +1,21 @@
 import {
   cmdResult,
   Commands,
-  isCommand,
+  isCommandMessage,
   type Client,
   type CommandName,
   type WsMessage,
 } from "@alicarti/shared";
-import { ulid } from "ulid";
 import type { ClientsManager } from "./ClientsManager";
 import type { TopicManager } from "./Topic";
 import type { ServerWebSocket } from "bun";
+import { topicId } from "./idGenerators";
 
 export function handleRoomCreation(
   ws: ServerWebSocket<Client>,
   serverContext: { clients: ClientsManager; topics: TopicManager }
 ) {
-  const roomId = `r_${ulid()}`;
+  const roomId = topicId();
   const roomTopic = serverContext.topics.create(roomId, true);
   serverContext.clients.joinTopic(roomTopic, ws);
   ws.send(
@@ -32,18 +32,18 @@ export function handleRoomJoining(
   commandMessage: WsMessage<any>,
   serverContext: { clients: ClientsManager; topics: TopicManager }
 ) {
-  if (!isCommand<{ roomId: string }>(commandMessage)) {
-    return fail(ws, Commands.JOIN_ROOM);
+  if (!isCommandMessage<{ roomId: string }>(commandMessage)) {
+    return failure(ws, Commands.JOIN_ROOM);
   }
 
   if (!commandMessage.payload.data) {
-    return fail(ws, Commands.JOIN_ROOM);
+    return failure(ws, Commands.JOIN_ROOM);
   }
 
   const roomId = commandMessage.payload.data.roomId;
   const roomTopic = serverContext.topics.byName(roomId);
   if (!roomTopic) {
-    return fail(ws, Commands.JOIN_ROOM, { roomId });
+    return failure(ws, Commands.JOIN_ROOM, { roomId });
   }
 
   serverContext.clients.joinTopic(roomTopic, ws);
@@ -64,7 +64,7 @@ function success<T>(
   );
 }
 
-function fail<T>(ws: ServerWebSocket<Client>, command: CommandName, data?: T) {
+function failure<T>(ws: ServerWebSocket<Client>, command: CommandName, data?: T) {
   ws.send(
     cmdResult({
       command,

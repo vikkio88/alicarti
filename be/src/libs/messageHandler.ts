@@ -1,6 +1,6 @@
 import {
   Commands,
-  isCommand,
+  isCommandMessage,
   type Client,
   type CommandInfo,
   type WsMessage,
@@ -22,8 +22,9 @@ export function messageHandler(
     topics: TopicManager;
   }
 ) {
-  if (isCommand(message)) {
-    switch (message.payload.command as keyof typeof Commands) {
+  if (isCommandMessage(message)) {
+    const command = message.payload;
+    switch (command.command) {
       case Commands.CREATE_ROOM: {
         handleRoomCreation(ws, serverContext);
         break;

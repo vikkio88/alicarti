@@ -1,4 +1,14 @@
-import type { Client, CommandPayload, SetupPayload, WsMessage } from "./index";
+import {
+  MessageTypes,
+  type Client,
+  type CommandMessage,
+  type CommandPayload,
+  type CommandResultMessage,
+  type ErrorMessage,
+  type SetupMessage,
+  type SetupPayload,
+  type WsMessage,
+} from "./index";
 
 export function toString<T>(message: WsMessage<T>): string {
   try {
@@ -32,7 +42,6 @@ export function cmdResult<T>(payload: CommandPayload<T>) {
   return toString({ type: "command_result", payload });
 }
 
-
 export function parseMessage<T>(msg: string): WsMessage<T> {
   try {
     return JSON.parse(msg) as WsMessage<T>;
@@ -43,18 +52,24 @@ export function parseMessage<T>(msg: string): WsMessage<T> {
 
 export function isErrorMessage(
   message: WsMessage<any>
-): message is { type: "error"; error: string } {
-  return message.type === "error";
+): message is ErrorMessage {
+  return message.type === MessageTypes.error;
 }
 
-export function isSetupMessage(
-  message: WsMessage<any>
-): message is { type: "setup"; payload: SetupPayload<any> } {
-  return message.type === "setup";
+export function isSetupMessage<T>(
+  message: WsMessage<T>
+): message is SetupMessage<T> {
+  return message.type === MessageTypes.setup;
 }
 
-export function isCommand<T>(
-  message: WsMessage<any>
-): message is { type: "command"; payload: CommandPayload<T> } {
-  return message.type === "command";
+export function isCommandMessage<T>(
+  message: WsMessage<T>
+): message is CommandMessage<T> {
+  return message.type === MessageTypes.command;
+}
+
+export function isCommandResultMessage<T>(
+  message: WsMessage<T>
+): message is CommandResultMessage<T> {
+  return message.type === MessageTypes.command_result;
 }

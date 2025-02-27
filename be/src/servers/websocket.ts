@@ -1,10 +1,10 @@
 import type { WebSocketHandler } from "bun";
-import { ulid } from "ulid";
 import type { Client } from "@alicarti/shared";
 import { parseMessage, setup, stateUpdate } from "@alicarti/shared";
 import { Topic, TopicManager } from "../libs/Topic";
 import { ClientsManager } from "../libs/ClientsManager";
 import { availableCommands, messageHandler } from "../libs/messageHandler";
+import { clientId } from "../libs/idGenerators";
 
 const clientsManager = new ClientsManager();
 
@@ -50,7 +50,7 @@ export const websocketServe = ({
 };
 
 export function websocketUpgrade(): { data: Client } {
-  const socketId = ulid().toString();
+  const socketId = clientId();
   return {
     data: {
       createdAt: Date.now(),
