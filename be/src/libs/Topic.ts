@@ -45,7 +45,7 @@ export class TopicManager {
   constructor(topics: Topic[] = []) {
     for (const t of topics) this.#topics[t.name] = t;
   }
-  
+
   create(name: string, clientsCanPublish: boolean): Topic {
     this.#topics[name] = new Topic(name, clientsCanPublish);
     return this.#topics[name];
@@ -53,5 +53,9 @@ export class TopicManager {
 
   byName(name: string): Topic | null {
     return this.#topics[name] ?? null;
+  }
+
+  getManyByName(topics: string[]): Topic[] {
+    return topics.map(this.byName).filter((t) => t != null);
   }
 }

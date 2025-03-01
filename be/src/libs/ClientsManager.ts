@@ -20,8 +20,10 @@ export class ClientsManager {
     }
   }
 
-  leaveTopic(topic: Topic, ws: ServerWebSocket<Client>) {
+  leaveTopic(topic: Topic, ws: ServerWebSocket<Client>, leavingAll = false) {
     topic.unsubscribe(ws);
+    if (leavingAll) return;
+    
     if (this.#clients[ws.data.socketId]) {
       this.#clients[ws.data.socketId] = this.#clients[ws.data.socketId].filter(
         (tName) => tName != topic.name
@@ -35,5 +37,9 @@ export class ClientsManager {
 
   onDisconnect(ws: ServerWebSocket<Client>) {
     delete this.#clients[ws.data.socketId];
+  }
+
+  getClientTopics(ws: ServerWebSocket<Client>): string[] {
+    return this.#clients[ws.data.socketId] ?? [];
   }
 }

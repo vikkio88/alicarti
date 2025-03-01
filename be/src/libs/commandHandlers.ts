@@ -2,6 +2,7 @@ import {
   cmdResult,
   Commands,
   isCommandMessage,
+  stateUpdate,
   type Client,
   type CommandName,
   type WsMessage,
@@ -47,6 +48,11 @@ export function handleRoomJoining(
   }
 
   serverContext.clients.joinTopic(roomTopic, ws);
+
+  roomTopic.publish(
+    ws,
+    stateUpdate({ sender: "server", entry: `${ws.data.socketId} joined` })
+  );
   success(ws, Commands.JOIN_ROOM, { roomId });
 }
 
@@ -64,7 +70,11 @@ function success<T>(
   );
 }
 
-function failure<T>(ws: ServerWebSocket<Client>, command: CommandName, data?: T) {
+function failure<T>(
+  ws: ServerWebSocket<Client>,
+  command: CommandName,
+  data?: T
+) {
   ws.send(
     cmdResult({
       command,

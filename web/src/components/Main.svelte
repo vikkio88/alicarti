@@ -14,10 +14,6 @@
   let { onClose }: Props = $props();
 
   connection.addMessageHandler((message: WsMessage<any>) => {
-    if (message.type === "state_update") {
-      console.log({ message });
-    }
-
     if (message.type === "command_result") {
       const commandResult = message.payload as CommandPayload<any>;
       switch (commandResult.command) {

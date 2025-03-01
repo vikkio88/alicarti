@@ -5,13 +5,14 @@ import {
   isSetupMessage,
   type Client,
   type WsMessage,
-  type CommandPayload,
+  type WsEvents,
 } from "@alicarti/shared";
 
 const WS_SERVER_URL = "http://localhost:3000";
 
-export type WsEventListener = (ev: MessageEvent<any>) => void;
-export type WsEvents = "message";
+export type WsEventListener = (
+  ev: MessageEvent<any> | Event | CloseEvent
+) => void;
 let ws: WebSocket | null = null;
 let connectionInfo: Client | null = null;
 let initialState: any = undefined;
@@ -67,7 +68,9 @@ export const connection = {
   },
   setMessageHandler<T>(handler: (m: WsMessage<T>) => void) {
     this.replaceEventListener("message", (ev) => {
-      const message = parseMessage(ev.data) as WsMessage<T>;
+      const message = parseMessage(
+        (ev as MessageEvent<any>).data
+      ) as WsMessage<T>;
       handler(message);
     });
   },

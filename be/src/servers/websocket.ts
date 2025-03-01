@@ -39,7 +39,10 @@ export const websocketServe = ({
     },
     async close(ws) {
       log(`client disconnected: ${ws.data.socketId}`);
-      clientsManager.leaveTopic(everyoneTopic, ws);
+      const topics = clientsManager.getClientTopics(ws);
+      topicsManager.getManyByName(topics).forEach(t => {
+        clientsManager.leaveTopic(t, ws, true);
+      });
       clientsManager.onDisconnect(ws);
       everyoneTopic.publish(
         ws,
