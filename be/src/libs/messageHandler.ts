@@ -8,7 +8,7 @@ import {
 import type { ServerWebSocket } from "bun";
 import type { ClientsManager } from "./ClientsManager";
 import type { TopicManager } from "./Topic";
-import { handleRoomCreation, handleRoomJoining } from "./commandHandlers";
+import { handleRoomCreation, handleRoomJoining, handleRoomLeaving } from "./commandHandlers";
 export const availableCommands: CommandInfo[] = [
   { name: Commands.CREATE_ROOM, description: "Create a room" },
   { name: Commands.JOIN_ROOM, description: "Join a room" },
@@ -31,6 +31,10 @@ export function messageHandler(
       }
       case Commands.JOIN_ROOM: {
         handleRoomJoining(ws, message, serverContext);
+        break;
+      }
+      case Commands.LEAVE_ROOM: {
+        handleRoomLeaving(ws, message, serverContext);
         break;
       }
     }

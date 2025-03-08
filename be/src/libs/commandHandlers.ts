@@ -56,6 +56,35 @@ export function handleRoomJoining(
   success(ws, Commands.JOIN_ROOM, { roomId });
 }
 
+export function handleRoomLeaving(
+  ws: ServerWebSocket<Client>,
+  commandMessage: WsMessage<any>,
+  serverContext: { clients: ClientsManager; topics: TopicManager }
+) {
+  if (!isCommandMessage<{ roomId: string }>(commandMessage)) {
+    return failure(ws, Commands.LEAVE_ROOM);
+  }
+
+  if (!commandMessage.payload.data) {
+    return failure(ws, Commands.LEAVE_ROOM);
+  }
+
+  const roomId = commandMessage.payload.data.roomId;
+  const roomTopic = serverContext.topics.byName(roomId);
+  if (!roomTopic) {
+    return failure(ws, Commands.LEAVE_ROOM, { roomId });
+  }
+
+  serverContext.clients.leaveTopic(roomTopic, ws);
+  //TODO: add way to remove topic if no clients left
+
+  roomTopic.publish(
+    ws,
+    stateUpdate({ sender: "server", entry: `${ws.data.socketId} left` })
+  );
+  success(ws, Commands.LEAVE_ROOM, { roomId });
+}
+
 function success<T>(
   ws: ServerWebSocket<Client>,
   command: CommandName,

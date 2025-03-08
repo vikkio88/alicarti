@@ -20,10 +20,9 @@ export class ClientsManager {
     }
   }
 
-  leaveTopic(topic: Topic, ws: ServerWebSocket<Client>, leavingAll = false) {
+  leaveTopic(topic: Topic, ws: ServerWebSocket<Client>) {
     topic.unsubscribe(ws);
-    if (leavingAll) return;
-    
+
     if (this.#clients[ws.data.socketId]) {
       this.#clients[ws.data.socketId] = this.#clients[ws.data.socketId].filter(
         (tName) => tName != topic.name

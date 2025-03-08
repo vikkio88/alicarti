@@ -20,8 +20,13 @@
         case Commands.JOIN_ROOM:
         case Commands.CREATE_ROOM: {
           if (commandResult.success) {
-            roomId = commandResult.data.roomId;
-            roomCreated = true;
+            joinedRoomId = commandResult.data.roomId;
+          }
+          break;
+        }
+        case Commands.LEAVE_ROOM: {
+          if (commandResult.success) {
+            joinedRoomId = null;
           }
         }
       }
@@ -32,9 +37,9 @@
     onClose();
   };
 
+  let joinedRoomId: string | null = $state(null);
   let roomId: string = $state("");
   let canCreateRoom = check(connection.info().connection);
-  let roomCreated = $state(false);
 </script>
 
 <div class="f r g_5 pd">
@@ -42,7 +47,7 @@
   <button class="small" onclick={disconnect}>❌</button>
 </div>
 
-{#if !roomCreated}
+{#if !joinedRoomId}
   <button
     disabled={!canCreateRoom}
     onclick={() => connection.command(Commands.CREATE_ROOM)}>Create Room</button
@@ -51,14 +56,13 @@
     <input type="text" bind:value={roomId} />
     <button
       disabled={roomId.length < 3}
-      onclick={() =>
-        connection.command(Commands.JOIN_ROOM, { roomId })}
+      onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
     >
       Join Room
     </button>
   </div>
 {:else}
-  <Room {roomId} />
+  <Room roomId={joinedRoomId} />
 {/if}
 
 <style>
