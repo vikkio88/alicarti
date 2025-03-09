@@ -32,16 +32,12 @@ export const websocketServe = ({
       clientsManager.onConnect(ws);
       clientsManager.joinTopic(everyoneTopic, ws);
       ws.send(setup({ ...ws.data }, { loggedIn: clientsManager.clientsCount }));
-      everyoneTopic.publish(
-        ws,
-        stateUpdate({ loggedIn: clientsManager.clientsCount })
-      );
     },
     async close(ws) {
       log(`client disconnected: ${ws.data.socketId}`);
       const topics = clientsManager.getClientTopics(ws);
       topicsManager.getManyByName(topics).forEach(t => {
-        clientsManager.leaveTopic(t, ws, true);
+        clientsManager.leaveTopic(t, ws);
       });
       clientsManager.onDisconnect(ws);
       everyoneTopic.publish(

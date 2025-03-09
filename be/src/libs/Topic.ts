@@ -52,7 +52,8 @@ export class TopicManager {
   }
 
   byName(name: string): Topic | null {
-    return this.#topics[name] ?? null;
+    const topics = this.#topics;
+    return topics[name] ?? null;
   }
 
   getManyByName(topics: string[]): Topic[] {
