@@ -14,6 +14,7 @@ import { topicId } from "./idGenerators";
 
 export function handleRoomCreation(
   ws: ServerWebSocket<Client>,
+  message: WsMessage<any>,
   serverContext: { clients: ClientsManager; topics: TopicManager }
 ) {
   const roomId = topicId();
