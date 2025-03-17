@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { Commands, type WsMessage } from "@alicarti/shared";
+  import { Commands, type Room as JoinedRoom, type WsMessage } from "@alicarti/shared";
   import { connection } from "../libs/ws";
+  type Props = {
+    room: JoinedRoom;
+  };
+  let { room }: Props = $props();
+
   let log: string[] = $state([]);
 
   type RoomLog = {
@@ -14,12 +19,13 @@
       log.push(`${logEntry.sender} : ${logEntry.entry}`);
     }
   });
-
-  let { roomId } = $props();
 </script>
 
-<h1>{roomId}</h1>
-<button onclick={() => connection.command(Commands.LEAVE_ROOM, { roomId })}>
+<h1>{room.roomId}</h1>
+<button
+  onclick={() =>
+    connection.command(Commands.LEAVE_ROOM, { roomId: room.roomId })}
+>
   Leave
 </button>
 

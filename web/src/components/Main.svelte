@@ -2,6 +2,8 @@
   import {
     Commands,
     type CommandPayload,
+    type Room as JoinedRoom,
+    type RoomType,
     type WsMessage,
   } from "@alicarti/shared";
   import { connection } from "../libs/ws";
@@ -20,13 +22,16 @@
         case Commands.JOIN_ROOM:
         case Commands.CREATE_ROOM: {
           if (commandResult.success) {
-            joinedRoomId = commandResult.data.roomId;
+            joinedRoom = {
+              roomId: commandResult.data.roomId,
+              type: commandResult.data.roomType as RoomType,
+            };
           }
           break;
         }
         case Commands.LEAVE_ROOM: {
           if (commandResult.success) {
-            joinedRoomId = null;
+            joinedRoom = null;
           }
         }
       }
@@ -37,7 +42,7 @@
     onClose();
   };
 
-  let joinedRoomId: string | null = $state(null);
+  let joinedRoom: JoinedRoom | null = $state(null);
   let roomId: string = $state("");
   let canCreateRoom = check(connection.info().connection);
 </script>
@@ -47,7 +52,7 @@
   <button class="small" onclick={disconnect}>❌</button>
 </div>
 
-{#if !joinedRoomId}
+{#if !joinedRoom}
   <button
     disabled={!canCreateRoom}
     onclick={() => connection.command(Commands.CREATE_ROOM)}>Create Room</button
@@ -62,7 +67,7 @@
     </button>
   </div>
 {:else}
-  <Room roomId={joinedRoomId} />
+  <Room room={joinedRoom} />
 {/if}
 
 <style>

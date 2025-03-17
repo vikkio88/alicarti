@@ -57,6 +57,6 @@ export class TopicManager {
   }
 
   getManyByName(topics: string[]): Topic[] {
-    return topics.map(this.byName).filter((t) => t != null);
+    return topics.map((tName) => this.byName(tName)).filter((t) => t != null);
   }
 }

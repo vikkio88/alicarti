@@ -3,8 +3,7 @@ import type { Client } from "@alicarti/shared";
 import { parseMessage, setup, stateUpdate } from "@alicarti/shared";
 import { Topic, TopicManager } from "../libs/Topic";
 import { ClientsManager } from "../libs/ClientsManager";
-import { availableCommands, messageHandler } from "../libs/messageHandler";
-import { clientId } from "../libs/idGenerators";
+import { messageHandler } from "../libs/messageHandler";
 
 const clientsManager = new ClientsManager();
 
@@ -36,7 +35,7 @@ export const websocketServe = ({
     async close(ws) {
       log(`client disconnected: ${ws.data.socketId}`);
       const topics = clientsManager.getClientTopics(ws);
-      topicsManager.getManyByName(topics).forEach(t => {
+      topicsManager.getManyByName(topics).forEach((t) => {
         clientsManager.leaveTopic(t, ws);
       });
       clientsManager.onDisconnect(ws);
@@ -49,12 +48,10 @@ export const websocketServe = ({
 };
 
 export function websocketUpgrade(): { data: Client } {
-  const socketId = clientId();
+  const client = ClientsManager.newClient();
   return {
     data: {
-      createdAt: Date.now(),
-      socketId,
-      availableCommands,
+      ...client,
     },
   };
 }

@@ -1,12 +1,11 @@
+import type { Client } from "./Client";
 import {
   MessageTypes,
-  type Client,
   type CommandMessage,
   type CommandPayload,
   type CommandResultMessage,
   type ErrorMessage,
   type SetupMessage,
-  type SetupPayload,
   type WsMessage,
 } from "./index";
 
