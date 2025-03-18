@@ -1,6 +1,7 @@
 import type { Client } from "@alicarti/shared";
 import { staticServe } from "./servers/static";
-import { websocketServe, websocketUpgrade, type WsServerConfig } from "./servers/websocket";
+import { websocketServe, type WsServerConfig } from "./servers/websocket";
+import { websocketUpgrade } from "./servers/upgrade";
 
 const CORS_HEADERS = {
   headers: {

@@ -46,12 +46,3 @@ export const websocketServe = ({
     },
   };
 };
-
-export function websocketUpgrade(): { data: Client } {
-  const client = ClientsManager.newClient();
-  return {
-    data: {
-      ...client,
-    },
-  };
-}

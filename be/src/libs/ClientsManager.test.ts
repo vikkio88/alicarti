@@ -60,7 +60,7 @@ describe("ClientsManager", () => {
   });
 
   it("should generate a new client object", () => {
-    const client = ClientsManager.newClient();
+    const client = ClientsManager.newClient([], []);
     expect(client).toHaveProperty("socketId");
     expect(client).toHaveProperty("createdAt");
     expect(client).toHaveProperty("name");

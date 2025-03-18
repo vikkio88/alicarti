@@ -1,10 +1,9 @@
 import type { ServerWebSocket } from "bun";
-import type { Client } from "@alicarti/shared";
+import type { Client, CommandInfo, RoomType } from "@alicarti/shared";
 import type { Topic } from "./Topic";
 import { clientId } from "./idGenerators";
-import { availableCommands } from "./messageHandler";
 
-export class ClientsManager { 
+export class ClientsManager {
   #clients: Record<string, string[]>;
 
   constructor() {
@@ -44,12 +43,16 @@ export class ClientsManager {
     return this.#clients[ws.data.socketId] ?? [];
   }
 
-  static newClient(): Client {
+  static newClient(
+    availableRooms: RoomType[],
+    availableCommands: CommandInfo[]
+  ): Client {
     return {
       socketId: clientId(),
       createdAt: Date.now(),
       name: "",
       availableCommands,
+      availableRooms,
     };
   }
 }
