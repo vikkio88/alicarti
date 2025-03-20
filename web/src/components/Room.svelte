@@ -1,6 +1,13 @@
 <script lang="ts">
-  import { Commands, type Room as JoinedRoom, type WsMessage } from "@alicarti/shared";
+  import {
+    Commands,
+    RoomTypes,
+    type Room as JoinedRoom,
+    type WsMessage,
+  } from "@alicarti/shared";
   import { connection } from "../libs/ws";
+  import { componentsMap } from "../config/config.svelte";
+
   type Props = {
     room: JoinedRoom;
   };
@@ -19,6 +26,8 @@
       log.push(`${logEntry.sender} : ${logEntry.entry}`);
     }
   });
+
+  let Room = componentsMap[room.type] || componentsMap[RoomTypes.echo];
 </script>
 
 <h1>{room.roomId}</h1>
@@ -29,6 +38,7 @@
   Leave
 </button>
 
+<Room />
 <ul>
   {#each log as entry}
     <li>{entry}</li>
