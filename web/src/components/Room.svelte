@@ -1,11 +1,6 @@
 <script lang="ts">
-  import {
-    Commands,
-    RoomTypes,
-    type Client,
-    type Room as JoinedRoom,
-    type WsMessage,
-  } from "@alicarti/shared";
+  import { Commands, type Client } from "@alicarti/shared";
+  import { RoomTypes, type Room as JoinedRoom } from "@alicarti/shared/rooms";
   import { connection } from "../libs/ws";
   import { componentsMap } from "../config/config.svelte";
 
@@ -19,8 +14,7 @@
 
 <h1>{self.socketId} @ {room.id}</h1>
 <button
-  onclick={() =>
-    connection.command(Commands.LEAVE_ROOM, { roomId: room.id })}
+  onclick={() => connection.command(Commands.LEAVE_ROOM, { roomId: room.id })}
 >
   Leave
 </button>

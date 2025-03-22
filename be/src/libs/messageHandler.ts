@@ -1,6 +1,7 @@
 import {
   Commands,
   isCommandMessage,
+  isActionMessage,
   type Client,
   type CommandInfo,
   type WsMessage,
@@ -46,5 +47,9 @@ export function messageHandler(
       }
     }
     return;
+  }
+
+  if(isActionMessage(message)) {
+
   }
 }

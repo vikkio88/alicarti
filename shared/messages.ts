@@ -1,6 +1,7 @@
 import type { Client } from "./Client";
 import {
   MessageTypes,
+  type ActionMessage,
   type CommandMessage,
   type CommandPayload,
   type CommandResultMessage,
@@ -65,6 +66,12 @@ export function isCommandMessage<T>(
   message: WsMessage<T>
 ): message is CommandMessage<T> {
   return message.type === MessageTypes.command;
+}
+
+export function isActionMessage<T>(
+  message: WsMessage<T>
+): message is ActionMessage<T> {
+  return message.type === MessageTypes.action;
 }
 
 export function isCommandResultMessage<T>(

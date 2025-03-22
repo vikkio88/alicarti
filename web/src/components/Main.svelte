@@ -2,10 +2,13 @@
   import {
     Commands,
     type CommandPayload,
-    type Room as JoinedRoom,
-    type RoomType,
     type WsMessage,
   } from "@alicarti/shared";
+  import {
+    type Room as JoinedRoom,
+    type RoomType,
+  } from "@alicarti/shared/rooms";
+
   import { connection } from "../libs/ws";
   import { canCreateRoom as check } from "../libs/utils";
   import Room from "./Room.svelte";
