@@ -2,6 +2,7 @@
   import {
     Commands,
     RoomTypes,
+    type Client,
     type Room as JoinedRoom,
     type WsMessage,
   } from "@alicarti/shared";
@@ -10,37 +11,18 @@
 
   type Props = {
     room: JoinedRoom;
+    self: Client;
   };
-  let { room }: Props = $props();
-
-  let log: string[] = $state([]);
-
-  type RoomLog = {
-    sender: string;
-    entry: string;
-  };
-
-  connection.addMessageHandler((message: WsMessage<any>) => {
-    if (message.type === "state_update") {
-      const logEntry = message.payload as RoomLog;
-      log.push(`${logEntry.sender} : ${logEntry.entry}`);
-    }
-  });
-
+  let { room, self }: Props = $props();
   let Room = componentsMap[room.type] || componentsMap[RoomTypes.echo];
 </script>
 
-<h1>{room.roomId}</h1>
+<h1>{self.socketId} @ {room.id}</h1>
 <button
   onclick={() =>
-    connection.command(Commands.LEAVE_ROOM, { roomId: room.roomId })}
+    connection.command(Commands.LEAVE_ROOM, { roomId: room.id })}
 >
   Leave
 </button>
 
 <Room />
-<ul>
-  {#each log as entry}
-    <li>{entry}</li>
-  {/each}
-</ul>

@@ -18,27 +18,30 @@ export const availableCommands: CommandInfo[] = [
   { name: Commands.JOIN_ROOM, description: "Join a room" },
 ];
 
+export type ServerContext = {
+  clients: ClientsManager;
+  topics: TopicManager;
+  logger: (msg: string) => void;
+};
+
 export function messageHandler(
   ws: ServerWebSocket<Client>,
   message: WsMessage<any>,
-  serverContext: {
-    clients: ClientsManager;
-    topics: TopicManager;
-  }
+  ctx: ServerContext
 ) {
   if (isCommandMessage(message)) {
     const command = message.payload;
     switch (command.command) {
       case Commands.CREATE_ROOM: {
-        handleRoomCreation(ws, message, serverContext);
+        handleRoomCreation(ws, message, ctx);
         break;
       }
       case Commands.JOIN_ROOM: {
-        handleRoomJoining(ws, message, serverContext);
+        handleRoomJoining(ws, message, ctx);
         break;
       }
       case Commands.LEAVE_ROOM: {
-        handleRoomLeaving(ws, message, serverContext);
+        handleRoomLeaving(ws, message, ctx);
         break;
       }
     }

@@ -15,20 +15,23 @@ export class ClientsManager {
   }
 
   joinTopic(topic: Topic, ws: ServerWebSocket<Client>) {
-    topic.subscribe(ws);
+    topic.join(ws);
     if (this.#clients[ws.data.socketId]) {
       this.#clients[ws.data.socketId].push(topic.name);
     }
   }
 
   leaveTopic(topic: Topic, ws: ServerWebSocket<Client>) {
-    topic.unsubscribe(ws);
+    const result = topic.leave(ws);
 
+    // remove topic from list of topics a client joined
     if (this.#clients[ws.data.socketId]) {
       this.#clients[ws.data.socketId] = this.#clients[ws.data.socketId].filter(
         (tName) => tName != topic.name
       );
     }
+
+    return result;
   }
 
   onConnect(ws: ServerWebSocket<Client>) {

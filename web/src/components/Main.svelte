@@ -23,7 +23,7 @@
         case Commands.CREATE_ROOM: {
           if (commandResult.success) {
             joinedRoom = {
-              roomId: commandResult.data.roomId,
+              id: commandResult.data.roomId,
               type: commandResult.data.roomType as RoomType,
             };
           }
@@ -67,7 +67,7 @@
     </button>
   </div>
 {:else}
-  <Room room={joinedRoom} />
+  <Room room={joinedRoom} self={connection.info().connection!} />
 {/if}
 
 <style>

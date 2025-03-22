@@ -3,12 +3,12 @@ import type { Client } from "@alicarti/shared";
 import { parseMessage, setup, stateUpdate } from "@alicarti/shared";
 import { Topic, TopicManager } from "../libs/Topic";
 import { ClientsManager } from "../libs/ClientsManager";
-import { messageHandler } from "../libs/messageHandler";
+import { messageHandler, type ServerContext } from "../libs/messageHandler";
 
 const clientsManager = new ClientsManager();
 
-const topicsManager = new TopicManager([new Topic("everyone")]);
-const everyoneTopic = topicsManager.byName("everyone")!;
+const topicsManager = new TopicManager([new Topic("broadcast")]);
+const broadcastTopic = topicsManager.byName("broadcast")!;
 
 export type WsServerConfig = {
   log: (...strings: string[]) => void;
@@ -17,29 +17,33 @@ export type WsServerConfig = {
 export const websocketServe = ({
   log = console.log,
 }: WsServerConfig): WebSocketHandler<Client> => {
+  
+  const ctx: ServerContext = {
+    clients: clientsManager,
+    topics: topicsManager,
+    logger: log,
+  };
+
   return {
     async message(ws, msg) {
-      log(`received message from ${ws.data.socketId}`);
       const message = parseMessage(msg as string);
-      messageHandler(ws, message, {
-        clients: clientsManager,
-        topics: topicsManager,
-      });
+      ctx.logger(`received message "${message.type}" from ${ws.data.socketId}`);
+      messageHandler(ws, message, ctx);
     },
     async open(ws) {
-      log(`client connected: ${ws.data.socketId}`);
-      clientsManager.onConnect(ws);
-      clientsManager.joinTopic(everyoneTopic, ws);
-      ws.send(setup({ ...ws.data }, { loggedIn: clientsManager.clientsCount }));
+      ctx.logger(`client connected: ${ws.data.socketId}`);
+      ctx.clients.onConnect(ws);
+      ctx.clients.joinTopic(broadcastTopic, ws);
+      ws.send(setup({ ...ws.data }, { loggedIn: ctx.clients.clientsCount }));
     },
     async close(ws) {
-      log(`client disconnected: ${ws.data.socketId}`);
+      ctx.logger(`client disconnected: ${ws.data.socketId}`);
       const topics = clientsManager.getClientTopics(ws);
-      topicsManager.getManyByName(topics).forEach((t) => {
-        clientsManager.leaveTopic(t, ws);
+      ctx.topics.getManyByName(topics).forEach((t) => {
+        ctx.clients.leaveTopic(t, ws);
       });
-      clientsManager.onDisconnect(ws);
-      everyoneTopic.publish(
+      ctx.clients.onDisconnect(ws);
+      broadcastTopic.publish(
         ws,
         stateUpdate({ loggedIn: clientsManager.clientsCount })
       );

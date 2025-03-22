@@ -1,10 +1,15 @@
 import type { ServerWebSocket } from "bun";
 import type { Client } from "@alicarti/shared";
 
+type TopicClientsUpdate = {
+  clientsCount: number;
+};
+
 export class Topic {
   #name: string;
   #clients: string[];
   #clientsCanPublish: boolean;
+
   constructor(name: string, clientsCanPublish: boolean = false) {
     this.#name = name;
     this.#clients = [];
@@ -19,14 +24,17 @@ export class Topic {
     return this.#name;
   }
 
-  subscribe(ws: ServerWebSocket<Client>) {
+  join(ws: ServerWebSocket<Client>): TopicClientsUpdate {
     ws.subscribe(this.name);
     this.#clients.push(ws.data.socketId);
+    return { clientsCount: this.#clients.length };
   }
 
-  unsubscribe(ws: ServerWebSocket<Client>) {
+  leave(ws: ServerWebSocket<Client>): TopicClientsUpdate {
     ws.unsubscribe(this.name);
     this.#clients = this.#clients.filter((s) => s != ws.data.socketId);
+
+    return { clientsCount: this.#clients.length };
   }
 
   publish(
@@ -51,9 +59,15 @@ export class TopicManager {
     return this.#topics[name];
   }
 
+  remove(name: string): boolean {
+    const topic = this.byName(name);
+    if (!topic) return false;
+    delete this.#topics[name];
+    return true;
+  }
+
   byName(name: string): Topic | null {
-    const topics = this.#topics;
-    return topics[name] ?? null;
+    return this.#topics[name] ?? null;
   }
 
   getManyByName(topics: string[]): Topic[] {

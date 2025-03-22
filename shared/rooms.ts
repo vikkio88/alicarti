@@ -6,6 +6,6 @@ export const RoomTypes = {
 export type RoomType = (typeof RoomTypes)[keyof typeof RoomTypes];
 
 export type Room = {
-  roomId: string;
+  id: string;
   type: RoomType;
 };

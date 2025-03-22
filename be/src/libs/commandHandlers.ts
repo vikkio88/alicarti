@@ -11,15 +11,18 @@ import type { ClientsManager } from "./ClientsManager";
 import type { TopicManager } from "./Topic";
 import type { ServerWebSocket } from "bun";
 import { topicId } from "./idGenerators";
+import type { ServerContext } from "./messageHandler";
 
 export function handleRoomCreation(
   ws: ServerWebSocket<Client>,
   message: WsMessage<any>,
-  serverContext: { clients: ClientsManager; topics: TopicManager }
+  ctx: ServerContext
 ) {
   const roomId = topicId();
-  const roomTopic = serverContext.topics.create(roomId, true);
-  serverContext.clients.joinTopic(roomTopic, ws);
+  const roomTopic = ctx.topics.create(roomId, true);
+  ctx.clients.joinTopic(roomTopic, ws);
+  ctx.logger(`\tclient: ${ws.data.socketId} created room ${roomId}`);
+
   ws.send(
     cmdResult({
       command: Commands.CREATE_ROOM,
@@ -32,7 +35,7 @@ export function handleRoomCreation(
 export function handleRoomJoining(
   ws: ServerWebSocket<Client>,
   commandMessage: WsMessage<any>,
-  serverContext: { clients: ClientsManager; topics: TopicManager }
+  ctx: ServerContext
 ) {
   if (!isCommandMessage<{ roomId: string }>(commandMessage)) {
     return failure(ws, Commands.JOIN_ROOM);
@@ -43,12 +46,13 @@ export function handleRoomJoining(
   }
 
   const roomId = commandMessage.payload.data.roomId;
-  const roomTopic = serverContext.topics.byName(roomId);
+  const roomTopic = ctx.topics.byName(roomId);
   if (!roomTopic) {
     return failure(ws, Commands.JOIN_ROOM, { roomId });
   }
 
-  serverContext.clients.joinTopic(roomTopic, ws);
+  ctx.clients.joinTopic(roomTopic, ws);
+  ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
 
   roomTopic.publish(
     ws,
@@ -60,7 +64,7 @@ export function handleRoomJoining(
 export function handleRoomLeaving(
   ws: ServerWebSocket<Client>,
   commandMessage: WsMessage<any>,
-  serverContext: { clients: ClientsManager; topics: TopicManager }
+  ctx: ServerContext
 ) {
   if (!isCommandMessage<{ roomId: string }>(commandMessage)) {
     return failure(ws, Commands.LEAVE_ROOM);
@@ -71,18 +75,29 @@ export function handleRoomLeaving(
   }
 
   const roomId = commandMessage.payload.data.roomId;
-  const roomTopic = serverContext.topics.byName(roomId);
+  const roomTopic = ctx.topics.byName(roomId);
   if (!roomTopic) {
     return failure(ws, Commands.LEAVE_ROOM, { roomId });
   }
 
-  serverContext.clients.leaveTopic(roomTopic, ws);
-  //TODO: add way to remove topic if no clients left
+  const result = ctx.clients.leaveTopic(roomTopic, ws);
+  ctx.logger(`\tclient: ${ws.data.socketId} left room ${roomId}`);
 
-  roomTopic.publish(
-    ws,
-    stateUpdate({ sender: "server", entry: `${ws.data.socketId} left` })
-  );
+  if (result.clientsCount < 1) {
+    // if there are no more clients left removing the room
+    ctx.logger(`\tNo more clients in room: ${roomId}, removing it.`);
+    ctx.topics.remove(roomId);
+  } else {
+    // otherwise notify the room about clients who left
+    ctx.logger(
+      `\tStill ${result.clientsCount} clients in room: ${roomId}, sending update.`
+    );
+    roomTopic.publish(
+      ws,
+      stateUpdate({ sender: "server", entry: `${ws.data.socketId} left` })
+    );
+  }
+
   success(ws, Commands.LEAVE_ROOM, { roomId });
 }
 
