@@ -53,7 +53,7 @@ export type CommandMessage<T> = {
 
 export type ActionMessage<T> = {
   type: typeof MessageTypes.action;
-  payload: T;
+  payload: ActionPayload<T>;
 };
 
 export type CommandResultMessage<T> = {

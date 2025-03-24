@@ -50,6 +50,7 @@ export function messageHandler(
   }
 
   if(isActionMessage(message)) {
-
+    const action  = message.payload;
+    ctx.logger(JSON.stringify(action));
   }
 }

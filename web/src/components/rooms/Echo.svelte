@@ -12,8 +12,8 @@
   };
 
   let { room }: Props = $props();
-  
-  let msg: string = $state(''); 
+
+  let msg: string = $state("");
   let roomState: EchoRoomState = $state({
     messages: [] as string[],
     clients: 0,
@@ -23,9 +23,10 @@
     roomState = message.payload;
   });
 
-
-  const shout = () => {
-    connection.action(echoRoomActions[0], room.id);
+  const shout = (e: SubmitEvent) => {
+    e.preventDefault();
+    connection.action(room.id, echoRoomActions[0], { msg });
+    msg = "";
   };
 </script>
 
@@ -38,5 +39,5 @@
 </ul>
 
 <form onsubmit={shout}>
-  <input bind:value={msg} />
+  <input type="text" bind:value={msg} />
 </form>

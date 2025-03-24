@@ -40,7 +40,7 @@ export function cmd<T>(payload: CommandPayload<T>) {
 }
 
 export function action<T>(payload: ActionPayload<T>) {
-  return toString({ type: "action", payload });
+  return toString({ type: "action", payload } as ActionMessage<T>);
 }
 
 export function cmdResult<T>(payload: CommandPayload<T>) {
