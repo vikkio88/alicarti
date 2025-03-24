@@ -1,4 +1,5 @@
-import { RoomTypes, type Client } from "@alicarti/shared";
+import { type Client } from "@alicarti/shared";
+import { RoomTypes } from "@alicarti/shared/rooms";
 import { ClientsManager } from "../libs/ClientsManager";
 import { availableCommands } from "../libs/messageHandler";
 

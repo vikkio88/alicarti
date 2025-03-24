@@ -19,4 +19,4 @@
   Leave
 </button>
 
-<Room />
+<Room {room} />

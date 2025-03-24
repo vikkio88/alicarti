@@ -2,6 +2,7 @@ import type { Client } from "./Client";
 import {
   MessageTypes,
   type ActionMessage,
+  type ActionPayload,
   type CommandMessage,
   type CommandPayload,
   type CommandResultMessage,
@@ -36,6 +37,10 @@ export function message<T>(payload: T) {
 
 export function cmd<T>(payload: CommandPayload<T>) {
   return toString({ type: "command", payload });
+}
+
+export function action<T>(payload: ActionPayload<T>) {
+  return toString({ type: "action", payload });
 }
 
 export function cmdResult<T>(payload: CommandPayload<T>) {

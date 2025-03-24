@@ -86,4 +86,10 @@ export type CommandPayload<T> = {
   data?: T;
 };
 
+export type ActionPayload<T> = {
+  action: string;
+  roomId: string;
+  data?: T;
+};
+
 export type WsEvents = "message" | "close" | "error" | "open";

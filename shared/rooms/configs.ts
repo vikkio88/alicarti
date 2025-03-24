@@ -1,22 +1,13 @@
 import { RoomTypes } from ".";
+import { echoRoomActions, type EchoRoomConfig } from "./echo";
 
-export type ActionConfig = {
+export interface ActionConfig {
   name: string;
-  payloadGenerator: (params: any) => any;
-};
-
-export interface RoomConfig<T> {
-  initialState: T;
-  availableActions: Record<string, ActionConfig>;
 }
 
-export type EchoRoomState = {
-  messages: string[];
-  clients: number;
-};
-
-export interface EchoRoomConfig extends RoomConfig<EchoRoomState> {
-  initialState: EchoRoomState;
+export interface RoomConfig<TState> {
+  initialState: TState;
+  availableActions: string[];
 }
 
 export const roomConfigGenerators = {
@@ -26,12 +17,7 @@ export const roomConfigGenerators = {
         messages: [],
         clients: 0,
       },
-      availableActions: {
-        shout: {
-          name: "shout",
-          payloadGenerator: (value: string) => value,
-        },
-      },
+      availableActions: [...echoRoomActions],
     };
   },
 };
