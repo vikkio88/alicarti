@@ -5,17 +5,16 @@ import {
   stateUpdate,
   type Client,
   type CommandName,
+  type CommandPayload,
   type WsMessage,
 } from "@alicarti/shared";
-import type { ClientsManager } from "./ClientsManager";
-import type { TopicManager } from "./Topic";
 import type { ServerWebSocket } from "bun";
 import { topicId } from "./idGenerators";
 import type { ServerContext } from "./messageHandler";
 
 export function handleRoomCreation(
   ws: ServerWebSocket<Client>,
-  message: WsMessage<any>,
+  payload: CommandPayload<any>,
   ctx: ServerContext
 ) {
   const roomId = topicId();
@@ -34,18 +33,14 @@ export function handleRoomCreation(
 
 export function handleRoomJoining(
   ws: ServerWebSocket<Client>,
-  commandMessage: WsMessage<any>,
+  payload: CommandPayload<any>,
   ctx: ServerContext
 ) {
-  if (!isCommandMessage<{ roomId: string }>(commandMessage)) {
+  if (!payload.data) {
     return failure(ws, Commands.JOIN_ROOM);
   }
 
-  if (!commandMessage.payload.data) {
-    return failure(ws, Commands.JOIN_ROOM);
-  }
-
-  const roomId = commandMessage.payload.data.roomId;
+  const roomId = payload.data.roomId;
   const roomTopic = ctx.topics.byName(roomId);
   if (!roomTopic) {
     return failure(ws, Commands.JOIN_ROOM, { roomId });
@@ -63,18 +58,14 @@ export function handleRoomJoining(
 
 export function handleRoomLeaving(
   ws: ServerWebSocket<Client>,
-  commandMessage: WsMessage<any>,
+  payload: CommandPayload<any>,
   ctx: ServerContext
 ) {
-  if (!isCommandMessage<{ roomId: string }>(commandMessage)) {
+  if (!payload.data) {
     return failure(ws, Commands.LEAVE_ROOM);
   }
 
-  if (!commandMessage.payload.data) {
-    return failure(ws, Commands.LEAVE_ROOM);
-  }
-
-  const roomId = commandMessage.payload.data.roomId;
+  const roomId = payload.data.roomId;
   const roomTopic = ctx.topics.byName(roomId);
   if (!roomTopic) {
     return failure(ws, Commands.LEAVE_ROOM, { roomId });

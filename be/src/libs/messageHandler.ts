@@ -9,11 +9,7 @@ import {
 import type { ServerWebSocket } from "bun";
 import type { ClientsManager } from "./ClientsManager";
 import type { TopicManager } from "./Topic";
-import {
-  handleRoomCreation,
-  handleRoomJoining,
-  handleRoomLeaving,
-} from "./commandHandlers";
+import { handleAction, handleCommand } from "./handlers";
 export const availableCommands: CommandInfo[] = [
   { name: Commands.CREATE_ROOM, description: "Create a room" },
   { name: Commands.JOIN_ROOM, description: "Join a room" },
@@ -32,25 +28,12 @@ export function messageHandler(
 ) {
   if (isCommandMessage(message)) {
     const command = message.payload;
-    switch (command.command) {
-      case Commands.CREATE_ROOM: {
-        handleRoomCreation(ws, message, ctx);
-        break;
-      }
-      case Commands.JOIN_ROOM: {
-        handleRoomJoining(ws, message, ctx);
-        break;
-      }
-      case Commands.LEAVE_ROOM: {
-        handleRoomLeaving(ws, message, ctx);
-        break;
-      }
-    }
+    handleCommand(command, ws, message, ctx);
     return;
   }
 
-  if(isActionMessage(message)) {
-    const action  = message.payload;
-    ctx.logger(JSON.stringify(action));
+  if (isActionMessage(message)) {
+    const action = message.payload;
+    handleAction(action, ws, ctx);
   }
 }
