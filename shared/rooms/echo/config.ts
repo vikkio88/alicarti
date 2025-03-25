@@ -1,4 +1,4 @@
-import type { RoomConfig } from "./configs";
+import type { RoomConfig } from "../configs";
 
 export type EchoRoomState = {
   messages: string[];

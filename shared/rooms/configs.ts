@@ -1,5 +1,5 @@
 import { RoomTypes } from ".";
-import { echoRoomActions, type EchoRoomConfig } from "./echo";
+import { echoRoomActions, type EchoRoomConfig } from "./echo/config";
 
 export interface ActionConfig {
   name: string;

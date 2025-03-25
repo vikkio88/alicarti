@@ -3,7 +3,7 @@
   import {
     echoRoomActions,
     type EchoRoomState,
-  } from "@alicarti/shared/rooms/echo";
+  } from "@alicarti/shared/rooms/echo/config";
   import { connection } from "../../libs/ws";
   import type { Room } from "@alicarti/shared/rooms";
 
