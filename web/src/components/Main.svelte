@@ -5,6 +5,7 @@
     type WsMessage,
   } from "@alicarti/shared";
   import {
+    RoomTypes,
     type Room as JoinedRoom,
     type RoomType,
   } from "@alicarti/shared/rooms";
@@ -26,8 +27,8 @@
         case Commands.CREATE_ROOM: {
           if (commandResult.success) {
             joinedRoom = {
-              id: commandResult.data.roomId,
-              type: commandResult.data.roomType as RoomType,
+              id: commandResult.data.id,
+              type: commandResult.data.type as RoomType,
             };
           }
           break;
@@ -58,8 +59,11 @@
 {#if !joinedRoom}
   <button
     disabled={!canCreateRoom}
-    onclick={() => connection.command(Commands.CREATE_ROOM)}>Create Room</button
+    onclick={() =>
+      connection.command(Commands.CREATE_ROOM, { roomType: RoomTypes.echo })}
   >
+    Create Room
+  </button>
   <div class="f rc g">
     <input type="text" bind:value={roomId} />
     <button
