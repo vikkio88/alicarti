@@ -10,6 +10,8 @@ import {
   action as act,
 } from "@alicarti/shared";
 
+type Cb = () => void;
+
 const WS_SERVER_URL = "http://localhost:3000";
 
 export type WsEventListener = (
@@ -36,7 +38,7 @@ export const connection = {
   info() {
     return { connection: connectionInfo, initialState };
   },
-  open(callback: () => void = () => {}) {
+  open(callback: Cb = () => {}) {
     if (ws) return ws;
 
     ws = new WebSocket(WS_SERVER_URL);
@@ -52,6 +54,12 @@ export const connection = {
 
     ws.close();
     ws = null;
+  },
+  onClose(callback: Cb | null = null) {
+    ws?.addEventListener("close", () => {
+      ws = null;
+      if (callback) callback();
+    });
   },
   message(msg: string) {
     ws?.send(msg);

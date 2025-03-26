@@ -7,6 +7,7 @@
   const connect = () => {
     connection.open(() => (isConnected = true));
   };
+  connection.onClose(() => (isConnected = false));
 
   onMount(() => () => connection.close());
 </script>
