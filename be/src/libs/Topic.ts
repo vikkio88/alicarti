@@ -1,5 +1,8 @@
-import type { ServerWebSocket } from "bun";
-import type { Client } from "@alicarti/shared";
+import type { Server, ServerWebSocket } from "bun";
+import type { ActionPayload, Client } from "@alicarti/shared";
+import { RoomTypes, type RoomType } from "@alicarti/shared/rooms";
+import type { StatefulRoom } from "../rooms/interfaces";
+import { RoomFactory } from "../rooms/RoomFactory";
 
 type TopicClientsUpdate = {
   clientsCount: number;
@@ -7,13 +10,19 @@ type TopicClientsUpdate = {
 
 export class Topic {
   #name: string;
+  #type: RoomType;
   #clients: string[];
   #clientsCanPublish: boolean;
 
-  constructor(name: string, clientsCanPublish: boolean = false) {
+  constructor(
+    name: string,
+    clientsCanPublish: boolean = false,
+    type: RoomType = RoomTypes.broadcast
+  ) {
     this.#name = name;
     this.#clients = [];
     this.#clientsCanPublish = clientsCanPublish;
+    this.#type = type;
   }
 
   get clientsCount() {
@@ -22,6 +31,10 @@ export class Topic {
 
   get name() {
     return this.#name;
+  }
+
+  get type() {
+    return this.#type;
   }
 
   join(ws: ServerWebSocket<Client>): TopicClientsUpdate {
@@ -38,24 +51,34 @@ export class Topic {
   }
 
   publish(
-    ws: ServerWebSocket<Client>,
+    ws: Server,
     message: string,
     isServer: boolean = true
   ) {
     if (isServer || this.#clientsCanPublish) {
+      console.log(this.name, message);
       ws.publish(this.name, message);
     }
   }
 }
 
 export class TopicManager {
+  // #server: ServerWebSocket<Client>;
   #topics: Record<string, Topic> = {};
+  #topicsRoom: Record<string, StatefulRoom<any> | null> = {};
+
   constructor(topics: Topic[] = []) {
+    // this.#server = server;
     for (const t of topics) this.#topics[t.name] = t;
   }
 
-  create(name: string, clientsCanPublish: boolean): Topic {
-    this.#topics[name] = new Topic(name, clientsCanPublish);
+  create(name: string, clientsCanPublish: boolean, type: RoomType): Topic {
+    this.#topics[name] = new Topic(name, clientsCanPublish, type);
+    const room = RoomFactory.make(type);
+    if (room) {
+      this.#topicsRoom[name] = room;
+    }
+
     return this.#topics[name];
   }
 
@@ -68,6 +91,10 @@ export class TopicManager {
 
   byName(name: string): Topic | null {
     return this.#topics[name] ?? null;
+  }
+
+  roomByName<T>(name: string): StatefulRoom<T> | null {
+    return this.#topicsRoom[name] ?? null;
   }
 
   getManyByName(topics: string[]): Topic[] {

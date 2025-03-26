@@ -17,18 +17,19 @@ export function handleRoomCreation(
   payload: CommandPayload<any>,
   ctx: ServerContext
 ) {
+  if (!payload.data || !payload.data.roomType) {
+    failure(ws, Commands.CREATE_ROOM);
+    return;
+  }
   const roomId = topicId();
-  const roomTopic = ctx.topics.create(roomId, true);
+  const roomType = payload.data.roomType;
+  const roomTopic = ctx.topics.create(roomId, true, roomType);
   ctx.clients.joinTopic(roomTopic, ws);
-  ctx.logger(`\tclient: ${ws.data.socketId} created room ${roomId}`);
-
-  ws.send(
-    cmdResult({
-      command: Commands.CREATE_ROOM,
-      success: true,
-      data: { roomId },
-    })
+  ctx.logger(
+    `\tclient: ${ws.data.socketId} created room ${roomId}, type: ${payload.data.roomType}}`
   );
+
+  success(ws, Commands.CREATE_ROOM, { id: roomId, type: roomType });
 }
 
 export function handleRoomJoining(
@@ -48,12 +49,7 @@ export function handleRoomJoining(
 
   ctx.clients.joinTopic(roomTopic, ws);
   ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
-
-  roomTopic.publish(
-    ws,
-    stateUpdate({ sender: "server", entry: `${ws.data.socketId} joined` })
-  );
-  success(ws, Commands.JOIN_ROOM, { roomId });
+  success(ws, Commands.JOIN_ROOM, { id: roomId, type: roomTopic.type });
 }
 
 export function handleRoomLeaving(
@@ -78,15 +74,6 @@ export function handleRoomLeaving(
     // if there are no more clients left removing the room
     ctx.logger(`\tNo more clients in room: ${roomId}, removing it.`);
     ctx.topics.remove(roomId);
-  } else {
-    // otherwise notify the room about clients who left
-    ctx.logger(
-      `\tStill ${result.clientsCount} clients in room: ${roomId}, sending update.`
-    );
-    roomTopic.publish(
-      ws,
-      stateUpdate({ sender: "server", entry: `${ws.data.socketId} left` })
-    );
   }
 
   success(ws, Commands.LEAVE_ROOM, { roomId });

@@ -20,10 +20,10 @@ export function toString<T>(message: WsMessage<T>): string {
   }
 }
 
-export function setup<T>(setup: Client, initialState: T) {
+export function setup<T>(setup: Client) {
   return toString({
     type: "setup",
-    payload: { setup, initialState },
+    payload: { setup },
   });
 }
 

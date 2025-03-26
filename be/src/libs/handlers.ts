@@ -4,6 +4,7 @@ import {
   type CommandMessage,
   type CommandPayload,
   type ActionPayload,
+  stateUpdate,
 } from "@alicarti/shared";
 import type { ServerWebSocket } from "bun";
 import type { ServerContext } from "./messageHandler";
@@ -40,5 +41,16 @@ export function handleAction(
   ws: ServerWebSocket<Client>,
   ctx: ServerContext
 ) {
-  ctx.logger(`${ws.data.socketId}: ${JSON.stringify(action.data)}`);
+  const topic = ctx.topics.byName(action.roomId);
+  if (!topic) {
+    ctx.logger(`room ${action.roomId} does not exist`);
+    return;
+  }
+  const room = ctx.topics.roomByName(action.roomId);
+  if (!room) {
+    ctx.logger(`room ${action.roomId} cannot handle ${action.action}`);
+    return;
+  }
+  const newState = room.dispatch(action, ws, ctx);
+  topic.publish(ctx.server!, stateUpdate(newState));
 }

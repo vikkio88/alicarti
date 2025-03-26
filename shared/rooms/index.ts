@@ -1,4 +1,5 @@
 export const RoomTypes = {
+  broadcast: "broadcast",
   echo: "echo",
   chat: "chat",
 } as const;

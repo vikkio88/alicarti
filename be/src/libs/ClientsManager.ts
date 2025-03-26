@@ -1,7 +1,8 @@
 import type { ServerWebSocket } from "bun";
-import type { Client, CommandInfo, RoomType } from "@alicarti/shared";
+import type { Client, CommandInfo } from "@alicarti/shared";
 import type { Topic } from "./Topic";
 import { clientId } from "./idGenerators";
+import type { RoomType } from "@alicarti/shared/rooms";
 
 export class ClientsManager {
   #clients: Record<string, string[]>;
@@ -16,9 +17,14 @@ export class ClientsManager {
 
   joinTopic(topic: Topic, ws: ServerWebSocket<Client>) {
     topic.join(ws);
+
+    // add topic to the list of topics joined  the user
     if (this.#clients[ws.data.socketId]) {
       this.#clients[ws.data.socketId].push(topic.name);
+      return;
     }
+
+    this.#clients[ws.data.socketId] = [topic.name];
   }
 
   leaveTopic(topic: Topic, ws: ServerWebSocket<Client>) {

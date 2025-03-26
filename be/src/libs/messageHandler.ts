@@ -18,6 +18,7 @@ export const availableCommands: CommandInfo[] = [
 export type ServerContext = {
   clients: ClientsManager;
   topics: TopicManager;
+  server?: ReturnType<typeof Bun.serve>;
   logger: (msg: string) => void;
 };
 
