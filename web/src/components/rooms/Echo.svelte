@@ -2,6 +2,7 @@
   import type { StateUpdateMessage } from "@alicarti/shared";
   import {
     echoRoomActions,
+    type ShoutPayload,
     type EchoRoomState,
   } from "@alicarti/shared/rooms/echo/config";
   import { connection } from "../../libs/ws";
@@ -16,28 +17,29 @@
   let msg: string = $state("");
   let roomState: EchoRoomState = $state({
     messages: [] as string[],
-    clients: 0,
   });
 
   connection.addStateUpdater((message: StateUpdateMessage<EchoRoomState>) => {
+    console.log(message);
     roomState = message.payload;
   });
 
   const shout = (e: SubmitEvent) => {
     e.preventDefault();
-    connection.action(room.id, echoRoomActions[0], { msg });
+    connection.action<ShoutPayload>(room.id, echoRoomActions[0], {
+      message: msg,
+    });
     msg = "";
   };
 </script>
 
 <h1>Echo Room</h1>
-<h3>Clients: {roomState.clients}</h3>
+<form onsubmit={shout}>
+  <input type="text" bind:value={msg} />
+</form>
+<h2>Echos</h2>
 <ul>
   {#each roomState.messages as message}
     <li>{message}</li>
   {/each}
 </ul>
-
-<form onsubmit={shout}>
-  <input type="text" bind:value={msg} />
-</form>
