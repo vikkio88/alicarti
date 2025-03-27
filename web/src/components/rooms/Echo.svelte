@@ -6,17 +6,12 @@
     type EchoRoomState,
   } from "@alicarti/shared/rooms/echo/config";
   import { connection } from "../../libs/ws";
-  import type { Room } from "@alicarti/shared/rooms";
-
-  type Props = {
-    room: Room;
-  };
-
-  let { room }: Props = $props();
+  import type { RoomProps } from "./props";
+  let { room, initialState }: RoomProps<EchoRoomState> = $props();
 
   let msg: string = $state("");
-  let roomState: EchoRoomState = $state({
-    messages: [] as string[],
+  let roomState = $state({
+    ...initialState,
   });
 
   connection.addStateUpdater((message: StateUpdateMessage<EchoRoomState>) => {
@@ -34,6 +29,7 @@
 </script>
 
 <h1>Echo Room</h1>
+<input type="text" disabled value={room.id} />
 <form onsubmit={shout}>
   <input type="text" bind:value={msg} />
 </form>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import Main from "./components/Main.svelte";
+  import Main from "./pages/Main.svelte";
   import { connection } from "./libs/ws";
 
   let isConnected = $state(false);
@@ -13,11 +13,12 @@
 </script>
 
 <main>
-  <h1>Alicarti Web</h1>
   {#if isConnected}
     <Main onClose={() => (isConnected = false)} />
   {:else}
-    <button onclick={connect}>Connect</button>
+    <div class="f1 f cc">
+      <button onclick={connect}>Connect</button>
+    </div>
   {/if}
 </main>
 

@@ -12,7 +12,7 @@
 
   import { connection } from "../libs/ws";
   import { canCreateRoom as check } from "../libs/utils";
-  import Room from "./Room.svelte";
+  import RoomManager from "../components/RoomManager.svelte";
   type Props = {
     onClose: () => void;
   };
@@ -26,6 +26,7 @@
         case Commands.JOIN_ROOM:
         case Commands.CREATE_ROOM: {
           if (commandResult.success) {
+            initialState = commandResult.data.initialState;
             joinedRoom = {
               id: commandResult.data.id,
               type: commandResult.data.type as RoomType,
@@ -46,36 +47,70 @@
     onClose();
   };
 
+  let initialState: unknown = $state(undefined);
   let joinedRoom: JoinedRoom | null = $state(null);
   let roomId: string = $state("");
+  let roomType: string = $state(RoomTypes.echo);
   let canCreateRoom = check(connection.info().connection);
 </script>
 
-<div class="f r g_5 pd">
+<div class="topBar">
   {connection.info().connection?.socketId}
   <button class="small" onclick={disconnect}>❌</button>
 </div>
 
 {#if !joinedRoom}
-  <button
-    disabled={!canCreateRoom}
-    onclick={() =>
-      connection.command(Commands.CREATE_ROOM, { roomType: RoomTypes.echo })}
-  >
-    Create Room
-  </button>
-  <div class="f rc g">
-    <input type="text" bind:value={roomId} />
-    <button
-      disabled={roomId.length < 3}
-      onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
-    >
-      Join Room
-    </button>
+  <div class="f1 f cc g">
+    <div class="f r g_5">
+      <button
+        disabled={!canCreateRoom}
+        class="small"
+        onclick={() =>
+          connection.command(Commands.CREATE_ROOM, {
+            roomType,
+          })}
+      >
+        Create Room
+      </button>
+      <select class="roomTypeSelect" name="roomType" bind:value={roomType}>
+        <option selected>{RoomTypes.echo}</option>
+        <option>{RoomTypes.chat}</option>
+      </select>
+    </div>
+    <div class="f rc g_5">
+      <button
+        class="small"
+        disabled={roomId.length < 3}
+        onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
+      >
+        Join Room
+      </button>
+      <input type="text" bind:value={roomId} placeholder="Room id" />
+    </div>
   </div>
 {:else}
-  <Room room={joinedRoom} self={connection.info().connection!} />
+  <div class="f1">
+    <RoomManager
+      room={joinedRoom}
+      self={connection.info().connection!}
+      {initialState}
+    />
+  </div>
 {/if}
 
 <style>
+  .topBar {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  input[type="text"] {
+    text-align: center;
+  }
+  .roomTypeSelect {
+    min-width: 150px;
+    text-align: center;
+    font-size: 1.1rem;
+  }
 </style>

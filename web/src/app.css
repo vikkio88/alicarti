@@ -6,9 +6,18 @@ body {
   min-height: 100vh;
 }
 
-#app {
+#app{
   max-width: 100vh;
   margin: 0 auto;
   padding: 3rem;
-  text-align: center;
+}
+
+main {
+  max-width: 100vh;
+  margin: 0 auto;
+  display: flex;
+}
+
+input[type="select"] {
+  padding: 1.2rem 0.5rem;
 }
