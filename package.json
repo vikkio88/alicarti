@@ -9,8 +9,8 @@
     "typescript": "^5.0.0"
   },
   "workspaces": [
-    "be",
     "web",
+    "be",
     "shared"
   ],
   "scripts": {
