@@ -1,17 +1,15 @@
-import { parseMessage, setup, type Client } from "@alicarti/shared";
+import { type Client } from "@alicarti/shared";
 import { staticServe } from "./servers/static";
 import { websocketUpgrade } from "./servers/upgrade";
 import { Topic, TopicManager } from "./libs/Topic";
-import { messageHandler, type ServerContext } from "./libs/messageHandler";
 import { ClientsManager } from "./libs/ClientsManager";
-
-const CORS_HEADERS = {
-  headers: {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "OPTIONS, POST",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  },
-};
+import {
+  onClose,
+  onMessage,
+  onOpen,
+  type ServerContext,
+} from "./servers/websocket";
+import { BROADCAST_TOPIC_NAME, CORS_HEADERS } from "./const";
 
 export type WsServerConfig = {
   log: (...strings: string[]) => void;
@@ -22,8 +20,10 @@ const wsConfig: WsServerConfig = {
 };
 
 const clientsManager = new ClientsManager();
-const topicsManager = new TopicManager([new Topic("broadcast", false)]);
-const broadcastTopic = topicsManager.byName("broadcast")!;
+const topicsManager = new TopicManager([
+  new Topic(BROADCAST_TOPIC_NAME, false),
+]);
+const broadcastTopic = topicsManager.byName(BROADCAST_TOPIC_NAME)!;
 const ctx: ServerContext = {
   clients: clientsManager,
   topics: topicsManager,
@@ -35,28 +35,15 @@ const server = Bun.serve<Client>({
   websocket: {
     async message(ws, msg) {
       ctx.server = server;
-
-      const message = parseMessage(msg as string);
-      ctx.logger(`received message "${message.type}" from ${ws.data.socketId}`);
-      messageHandler(ws, message, ctx);
+      onMessage(ws, msg, ctx);
     },
     async open(ws) {
       ctx.server = server;
-
-      ctx.logger(`client connected: ${ws.data.socketId}`);
-      ctx.clients.onConnect(ws);
-      ctx.clients.joinTopic(broadcastTopic, ws);
-      ws.send(setup({ ...ws.data }));
+      onOpen(ws, ctx, broadcastTopic);
     },
     async close(ws) {
       ctx.server = server;
-      
-      ctx.logger(`client disconnected: ${ws.data.socketId}`);
-      const topics = clientsManager.getClientTopics(ws);
-      ctx.topics.getManyByName(topics).forEach((t) => {
-        ctx.clients.leaveTopic(t, ws);
-      });
-      ctx.clients.onDisconnect(ws);
+      onClose(ws, ctx);
     },
   },
   async fetch(req, server) {
@@ -77,6 +64,7 @@ const server = Bun.serve<Client>({
 console.log(`Running on :${server.port}`);
 process.on("SIGINT", () => {
   console.log("\nReceived SIGINT\nrunning cleanup...");
+  // TODO: ctx cleanup?
   server.stop(true);
   console.log("all done.");
   process.exit();

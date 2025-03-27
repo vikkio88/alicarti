@@ -7,7 +7,7 @@ import {
   stateUpdate,
 } from "@alicarti/shared";
 import type { ServerWebSocket } from "bun";
-import type { ServerContext } from "./messageHandler";
+import type { ServerContext } from "../servers/websocket";
 import {
   handleRoomCreation,
   handleRoomJoining,

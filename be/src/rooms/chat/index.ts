@@ -1,9 +1,10 @@
 import type { ActionPayload, Client } from "@alicarti/shared";
 import type {
-  EchoRoomActions,
-  EchoRoomState,
-  ShoutPayload,
-} from "@alicarti/shared/rooms/echo/config";
+  ChatRoomActions,
+  ChatRoomState,
+  SendMessagePayload,
+} from "@alicarti/shared/rooms/chat/config";
+
 import type { StatefulRoom } from "../StatefulRoom";
 import type { ServerWebSocket } from "bun";
 import type { ServerContext } from "../../servers/websocket";
@@ -11,20 +12,26 @@ import type { ServerContext } from "../../servers/websocket";
 const initialState = () => ({
   messages: [],
 });
-export class EchoRoom implements StatefulRoom<EchoRoomState> {
-  state: EchoRoomState;
+
+export class ChatRoom implements StatefulRoom<ChatRoomState> {
+  state: ChatRoomState;
   constructor() {
-    this.state = { ...initialState() };
+    this.state = initialState();
   }
   dispatch<TAction>(
     action: ActionPayload<TAction>,
     ws: ServerWebSocket<Client>,
     ctx: ServerContext
-  ): EchoRoomState {
-    switch (action.action as EchoRoomActions) {
-      case "shout": {
-        const data = action.data as ShoutPayload;
-        this.state.messages.push(`server: ${data.message}`);
+  ): ChatRoomState {
+    switch (action.action as ChatRoomActions) {
+      case "send_message": {
+        const data = action.data as SendMessagePayload;
+        const client = ws.data.socketId;
+        this.state.messages.push({
+          message: data.message,
+          author: client,
+          timestamp: Date.now(),
+        });
         break;
       }
       default: {
