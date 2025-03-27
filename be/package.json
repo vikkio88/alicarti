@@ -13,6 +13,7 @@
     "@alicarti/shared": "workspace:*"
   },
   "scripts": {
-    "dev": "bun run --watch ./src/index.ts"
+    "dev": "bun run --watch ./src/index.ts",
+    "check": "bunx tsc --noEmit -p tsconfig.json"
   }
 }
