@@ -7,11 +7,17 @@ This is the spiritual successor of 2 of my previous side projects: [strummulu](h
 
 Here I am trying to recreate and finish the project with bun and svelte5.
 
+## Fullstack
 - [ ] Send special commands to clients on EVERYONE topic (kick/remove/close)
+- [ ]  Server announcement ^ on broadcast topic
 - [ ] Setup room with Game on
-    - [ ] Allow clients to specify what type of room they support
+    - [x] Fix tests
     - [x] Room Type will link what the state to update looks like
     - [ ] Chat room
     - [ ] Adding names to rooms and clients instead of only ids
-    - [ ] Fix tests 
+    - [ ] Allow clients to specify what type of room they support
 - [x] Cleanup after everyone has left the room
+
+## FE
+- [ ] Global State for Connection and Room mgmt.
+
