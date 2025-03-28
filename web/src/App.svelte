@@ -2,18 +2,21 @@
   import { onMount } from "svelte";
   import Main from "./pages/Main.svelte";
   import { connection } from "./libs/ws";
+  import { appState } from "./store/appState.svelte";
+  import Nav from "./components/Nav.svelte";
 
-  let isConnected = $state(false);
   const connect = () => {
-    connection.open(() => (isConnected = true));
+    connection.open(() => appState.connected(connection.info().connection!));
   };
-  connection.onClose(() => (isConnected = false));
+  connection.onClose(() => appState.disconnected());
+
+  let isConnected = $derived(Boolean(appState.socketId));
 
   onMount(() => () => connection.close());
 </script>
-
+<Nav />
 {#if isConnected}
-  <Main onClose={() => (isConnected = false)} />
+  <Main />
 {:else}
   <div class="f1 f cc">
     <button onclick={connect}>Connect</button>

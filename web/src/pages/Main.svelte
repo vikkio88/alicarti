@@ -13,11 +13,7 @@
 
   import RoomManager from "../components/RoomManager.svelte";
   import Lobby from "../components/Lobby.svelte";
-  type Props = {
-    onClose: () => void;
-  };
-
-  let { onClose }: Props = $props();
+  import { appState } from "../store/appState.svelte";
 
   connection.addMessageHandler((message: WsMessage<any>) => {
     if (message.type === "command_result") {
@@ -31,6 +27,7 @@
               id: commandResult.data.id,
               type: commandResult.data.type as RoomType,
             };
+            appState.joinedRoom(joinedRoom);
           }
           break;
         }
@@ -42,19 +39,10 @@
       }
     }
   });
-  const disconnect = () => {
-    connection.close();
-    onClose();
-  };
 
   let initialState: unknown = $state(undefined);
   let joinedRoom: JoinedRoom | null = $state(null);
 </script>
-
-<div class="topBar">
-  {connection.info().connection?.socketId}
-  <button class="small" onclick={disconnect}>❌</button>
-</div>
 
 {#if !joinedRoom}
   <Lobby />
@@ -65,11 +53,3 @@
     {initialState}
   />
 {/if}
-
-<style>
-  .topBar {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-</style>
