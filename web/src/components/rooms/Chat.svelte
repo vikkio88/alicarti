@@ -1,9 +1,61 @@
 <script lang="ts">
-  import type { ChatRoomState } from "@alicarti/shared/rooms/chat/config";
+  import {
+    chatRoomActions,
+    type ChatRoomState,
+    type SendMessagePayload,
+  } from "@alicarti/shared/rooms/chat/config";
   import type { RoomProps } from "./props";
-  let { room, self }: RoomProps<ChatRoomState> = $props();
+  import { connection } from "../../libs/ws";
+  import type { StateUpdateMessage } from "@alicarti/shared";
+  let { room, self, initialState }: RoomProps<ChatRoomState> = $props();
+  let chatState = $state(initialState);
+  let message = $state("");
+
+  connection.addStateUpdater((message: StateUpdateMessage<ChatRoomState>) => {
+    chatState = message.payload;
+  });
+
+  const sendMessage = (e: SubmitEvent) => {
+    e.preventDefault();
+    connection.action<SendMessagePayload>(room.id, "send_message", { message });
+    message = "";
+  };
 </script>
 
 <h1>Chat Room</h1>
+<h2>{room.id}</h2>
+<div class="chat">
+  <ul>
+    {#each chatState.messages as message}
+      <li>
+        <div class="author" class:me={message.author === self.socketId}>
+          {message.author}
+        </div>
+        <div class="message">{message.message}</div>
+      </li>
+    {/each}
+  </ul>
+</div>
+<form onsubmit={sendMessage}>
+  <input type="text" placeholder="Message..." bind:value={message} />
+</form>
 
-{self.socketId}
+<style>
+  .chat {
+    flex: 8;
+    padding: 2rem;
+    background: var(--main-font-color);
+    color: var(--main-bg-color);
+  }
+
+  .me {
+    font-weight: bold;
+  }
+  form {
+    flex: 1;
+  }
+  form input {
+    width: 100%;
+    flex: 1;
+  }
+</style>

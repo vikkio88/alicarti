@@ -12,15 +12,13 @@
   onMount(() => () => connection.close());
 </script>
 
-<main>
-  {#if isConnected}
-    <Main onClose={() => (isConnected = false)} />
-  {:else}
-    <div class="f1 f cc">
-      <button onclick={connect}>Connect</button>
-    </div>
-  {/if}
-</main>
+{#if isConnected}
+  <Main onClose={() => (isConnected = false)} />
+{:else}
+  <div class="f1 f cc">
+    <button onclick={connect}>Connect</button>
+  </div>
+{/if}
 
 <style>
 </style>

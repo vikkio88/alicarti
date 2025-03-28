@@ -28,14 +28,16 @@
   };
 </script>
 
-<h1>Echo Room</h1>
-<input type="text" disabled value={room.id} />
-<form onsubmit={shout}>
-  <input type="text" bind:value={msg} />
-</form>
-<h2>Echos</h2>
-<ul>
-  {#each roomState.messages as message}
-    <li>{message}</li>
-  {/each}
-</ul>
+<div class="f1 f c">
+  <h1>Echo Room</h1>
+  <input type="text" disabled value={room.id} />
+  <form onsubmit={shout}>
+    <input type="text" bind:value={msg} />
+  </form>
+  <h2>Echos</h2>
+  <ul>
+    {#each roomState.messages as message}
+      <li>{message}</li>
+    {/each}
+  </ul>
+</div>

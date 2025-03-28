@@ -17,6 +17,7 @@ Here I am trying to recreate and finish the project with bun and svelte5.
     - [ ] Adding names to rooms and clients instead of only ids
     - [ ] Allow clients to specify what type of room they support
 - [x] Cleanup after everyone has left the room
+- [ ] Global toast errors
 
 ## FE
 - [ ] Global State for Connection and Room mgmt.

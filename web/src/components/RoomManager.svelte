@@ -21,7 +21,9 @@
   </button>
 </div>
 
-<Room {room} {self} {initialState} />
+<main>
+  <Room {room} {self} {initialState} />
+</main>
 
 <style>
   .topLeft {
