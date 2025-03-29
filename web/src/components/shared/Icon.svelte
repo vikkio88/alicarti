@@ -1,20 +1,15 @@
 <script lang="ts">
+  import { DoorOpenSolid, PlugCircleXmarkSolid } from "svelte-awesome-icons";
   type Props = {
     name: "disconnect" | "exit";
+    size?: "18" | "24" | "32";
   };
-  let { name }: Props = $props();
+  const map = {
+    disconnect: PlugCircleXmarkSolid,
+    exit: DoorOpenSolid,
+  };
+  let { name, size = "18" }: Props = $props();
+  let Ico = map[name];
 </script>
 
-<div class="icon">
-  <img src={`/icons/${name}.svg`} alt={name} />
-</div>
-
-<style>
-  img {
-    width: 1.5rem;
-  }
-
-  .icon {
-    color: white;
-  }
-</style>
+<Ico {size} />

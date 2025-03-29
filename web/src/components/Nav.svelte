@@ -53,8 +53,4 @@
     align-items: center;
     gap: 0.5rem;
   }
-
-  .top button {
-    /* padding: 0; */
-  }
 </style>
