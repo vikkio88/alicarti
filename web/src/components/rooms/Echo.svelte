@@ -30,9 +30,8 @@
 
 <div class="f1 f c">
   <h1>Echo Room</h1>
-  <input type="text" disabled value={room.id} />
   <form onsubmit={shout}>
-    <input type="text" bind:value={msg} />
+    <input type="text" bind:value={msg} placeholder="Message to echo"/>
   </form>
   <h2>Echos</h2>
   <ul>
@@ -41,3 +40,9 @@
     {/each}
   </ul>
 </div>
+
+<style>
+  input {
+    width: 100%;
+  }
+</style>

@@ -28,6 +28,7 @@ export const appState = {
     s.socketId = client.socketId;
   },
   disconnected() {
+    s.roomId = undefined;
     s.socketId = undefined;
   },
 };

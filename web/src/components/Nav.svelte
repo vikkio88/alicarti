@@ -2,6 +2,7 @@
   import { Commands } from "@alicarti/shared";
   import { connection } from "../libs/ws";
   import { appState } from "../store/appState.svelte";
+  import Icon from "./shared/Icon.svelte";
 
   const disconnect = () => {
     connection.close();
@@ -9,36 +10,51 @@
   };
 </script>
 
-{#if appState.roomId}
-  <div class="topLeft">
-    <button
-      onclick={() => {
-        connection.command(Commands.LEAVE_ROOM, { roomId: appState.roomId });
-        appState.leftRoom();
-      }}
-    >
-      Leave
-    </button>
+<div class="top">
+  <div>
+    {#if appState.roomId}
+      <button
+        class="small"
+        onclick={() => {
+          connection.command(Commands.LEAVE_ROOM, { roomId: appState.roomId });
+          appState.leftRoom();
+        }}
+      >
+        <Icon name="exit" />
+      </button>
+      {appState.roomId}
+    {/if}
   </div>
-{/if}
 
-{#if appState.socketId}
-  <div class="topBar">
-    {appState.socketId}
-    <button class="small" onclick={disconnect}>❌</button>
+  <div>
+    {#if appState.socketId}
+      {appState.socketId}
+      <button class="small" onclick={disconnect}>
+        <Icon name="disconnect" />
+      </button>
+    {/if}
   </div>
-{/if}
+</div>
 
 <style>
-  .topBar {
+  .top {
     position: absolute;
     top: 0;
-    right: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
   }
 
-  .topLeft {
-    position: absolute;
-    top: 0;
-    left: 0;
+  .top > div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .top button {
+    /* padding: 0; */
   }
 </style>
