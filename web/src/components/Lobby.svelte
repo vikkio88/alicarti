@@ -3,6 +3,7 @@
   import { RoomTypes } from "@alicarti/shared/rooms";
   import { connection } from "../libs/ws";
   import { Commands } from "@alicarti/shared";
+  import Icon from "./shared/Icon.svelte";
   let roomId: string = $state("");
   let roomType: string = $state(RoomTypes.chat);
   let canCreateRoom = check(connection.info().connection);
@@ -14,14 +15,14 @@
   <div class="f1 f cc">
     <div class="f r g_5">
       <button
+        class="f rc g_5"
         disabled={!canCreateRoom}
-        class="f1"
         onclick={() =>
           connection.command(Commands.CREATE_ROOM, {
             roomType,
           })}
       >
-        Create Room
+        <Icon name="create" /> Room
       </button>
       <div class="f cc">
         <label for="roomType">Room Type</label>
@@ -31,10 +32,7 @@
         </select>
       </div>
     </div>
-    <div class="f r mg g_5">
-      <button class="f1" onclick={() => (showJoin = !showJoin)}>
-        {!showJoin ? "Join Room" : "❌"}
-      </button>
+    <div class="f rc mg g_5">
       {#if showJoin}
         <input type="text" bind:value={roomId} placeholder="Room id" />
         <button
@@ -42,9 +40,16 @@
           disabled={roomId.length < 3}
           onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
         >
-          Join
+          <Icon name="enter" />
         </button>
       {/if}
+      <button class="f1 f rc g_5" onclick={() => (showJoin = !showJoin)}>
+        {#if showJoin}
+          <Icon name="x" />
+        {:else}
+          <Icon name="enter" /> Room
+        {/if}
+      </button>
     </div>
   </div>
 </main>

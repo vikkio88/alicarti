@@ -4,6 +4,7 @@
   import { connection } from "./libs/ws";
   import { appState } from "./store/appState.svelte";
   import Nav from "./components/Nav.svelte";
+  import Icon from "./components/shared/Icon.svelte";
 
   const connect = () => {
     connection.open(() => appState.connected(connection.info().connection!));
@@ -19,7 +20,7 @@
   <Main />
 {:else}
   <div class="f1 f cc">
-    <button onclick={connect}>Connect</button>
+    <button onclick={connect}><Icon name="connect" /> </button>
   </div>
 {/if}
 

@@ -10,7 +10,7 @@
   };
 </script>
 
-<div class="top">
+<div class="top" class:withItems={Boolean(appState.socketId)}>
   <div>
     {#if appState.roomId}
       <button
@@ -46,6 +46,13 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    padding: 1rem;
+  }
+
+  .withItems {
+    border-bottom: var(--borders);
+    border-color: var(--main-bg-faint-color);
+    background-color: var(--main-bg-faint-color);
   }
 
   .top > div {
