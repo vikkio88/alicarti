@@ -1,34 +1,33 @@
 <script lang="ts">
   import { Commands } from "@alicarti/shared";
   import { connection } from "../libs/ws";
-  import { appState } from "../store/appState.svelte";
+  import { ws } from "../store/wsState.svelte";
   import Icon from "./shared/Icon.svelte";
 
   const disconnect = () => {
     connection.close();
-    appState.disconnected();
+    ws.disconnected();
   };
 </script>
 
-<div class="top" class:withItems={Boolean(appState.socketId)}>
+<div class="top" class:withItems={Boolean(ws.socketId)}>
   <div>
-    {#if appState.roomId}
+    {#if ws.roomId}
       <button
         class="small"
         onclick={() => {
-          connection.command(Commands.LEAVE_ROOM, { roomId: appState.roomId });
-          appState.leftRoom();
+          connection.command(Commands.LEAVE_ROOM, { roomId: ws.roomId });
         }}
       >
         <Icon name="exit" />
       </button>
-      {appState.roomId}
+      {ws.roomId}
     {/if}
   </div>
 
   <div>
-    {#if appState.socketId}
-      {appState.socketId}
+    {#if ws.socketId}
+      {ws.socketId}
       <button class="small" onclick={disconnect}>
         <Icon name="disconnect" />
       </button>

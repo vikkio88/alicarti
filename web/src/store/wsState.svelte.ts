@@ -1,27 +1,41 @@
 import type { Client } from "@alicarti/shared";
 import type { Room } from "@alicarti/shared/rooms";
+import { connection } from "../libs/ws";
 
-type AppState = {
+type WsState = {
   roomId?: string;
   socketId?: string;
 };
 
-let s: AppState = $state({
+let s: WsState = $state({
   roomId: undefined,
   socketId: undefined,
 });
 
-export const appState = {
+export const ws = {
   get roomId() {
     return s.roomId;
   },
   get socketId() {
     return s.socketId;
   },
-  joinedRoom(room: Room) {
+  get isConnected() {
+    return Boolean(ws.socketId);
+  },
+  connect() {
+    connection.open(() => this.connected(connection.info().connection!));
+    connection.onClose(() => ws.disconnected());
+  },
+  disconnect() {
+    this.disconnected();
+    connection.close();
+  },
+
+  /** Post Event */
+  joinRoom(room: Room) {
     s.roomId = room.id;
   },
-  leftRoom() {
+  leaveRoom() {
     s.roomId = undefined;
   },
   connected(client: Client) {

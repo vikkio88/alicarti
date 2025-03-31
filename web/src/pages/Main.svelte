@@ -13,7 +13,7 @@
 
   import RoomManager from "../components/RoomManager.svelte";
   import Lobby from "../components/Lobby.svelte";
-  import { appState } from "../store/appState.svelte";
+  import { ws } from "../store/wsState.svelte";
 
   connection.addMessageHandler((message: WsMessage<any>) => {
     if (message.type === "command_result") {
@@ -27,13 +27,14 @@
               id: commandResult.data.id,
               type: commandResult.data.type as RoomType,
             };
-            appState.joinedRoom(joinedRoom);
+            ws.joinRoom(joinedRoom);
           }
           break;
         }
         case Commands.LEAVE_ROOM: {
           if (commandResult.success) {
             joinedRoom = null;
+            ws.leaveRoom();
           }
         }
       }
