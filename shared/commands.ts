@@ -1,3 +1,5 @@
+import type { Room } from "./rooms";
+
 export type CommandInfo = {
   name: string;
   description: string;
@@ -10,3 +12,8 @@ export const Commands = {
 } as const;
 
 export type CommandName = (typeof Commands)[keyof typeof Commands];
+
+export type JoinedRoomPayload<T> = {
+  room: Room;
+  initialState: T;
+};

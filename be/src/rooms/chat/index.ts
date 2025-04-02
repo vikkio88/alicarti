@@ -29,7 +29,7 @@ export class ChatRoom implements StatefulRoom<ChatRoomState> {
         const client = ws.data.socketId;
         this.state.messages.push({
           message: data.message,
-          author: client,
+          author: { id: client, name: ws.data.name },
           timestamp: Date.now(),
         });
         break;

@@ -8,5 +8,6 @@ export type RoomType = (typeof RoomTypes)[keyof typeof RoomTypes];
 
 export type Room = {
   id: string;
+  admin?: string;
   type: RoomType;
 };

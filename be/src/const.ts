@@ -1,4 +1,15 @@
+import { RoomTypes } from "@alicarti/shared/rooms";
+import type { TopicInit } from "./libs/Topic";
+
 export const BROADCAST_TOPIC_NAME = "broadcast";
+export const BROADCAST_TOPIC_CONFIG: TopicInit = {
+  name: BROADCAST_TOPIC_NAME,
+  type: RoomTypes.broadcast,
+  admin: "server",
+  options: {
+    clientsCanPublish: false,
+  },
+};
 export const CORS_HEADERS = {
   headers: {
     "Access-Control-Allow-Origin": "*",

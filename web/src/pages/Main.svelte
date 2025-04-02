@@ -2,11 +2,11 @@
   import {
     Commands,
     type CommandPayload,
+    type JoinedRoomPayload,
     type WsMessage,
   } from "@alicarti/shared";
   import {
     type Room as JoinedRoom,
-    type RoomType,
   } from "@alicarti/shared/rooms";
 
   import { connection } from "../libs/ws";
@@ -22,11 +22,9 @@
         case Commands.JOIN_ROOM:
         case Commands.CREATE_ROOM: {
           if (commandResult.success) {
-            initialState = commandResult.data.initialState;
-            joinedRoom = {
-              id: commandResult.data.id,
-              type: commandResult.data.type as RoomType,
-            };
+            const payload = commandResult.data as JoinedRoomPayload<any>;
+            initialState = payload.initialState;
+            joinedRoom = payload.room;
             ws.joinRoom(joinedRoom);
           }
           break;

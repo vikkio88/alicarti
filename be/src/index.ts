@@ -9,7 +9,11 @@ import {
   onOpen,
   type ServerContext,
 } from "./servers/websocket";
-import { BROADCAST_TOPIC_NAME, CORS_HEADERS } from "./const";
+import {
+  BROADCAST_TOPIC_CONFIG,
+  BROADCAST_TOPIC_NAME,
+  CORS_HEADERS,
+} from "./const";
 
 export type WsServerConfig = {
   log: (...strings: string[]) => void;
@@ -20,9 +24,7 @@ const wsConfig: WsServerConfig = {
 };
 
 const clientsManager = new ClientsManager();
-const topicsManager = new TopicManager([
-  new Topic(BROADCAST_TOPIC_NAME, false),
-]);
+const topicsManager = new TopicManager([new Topic(BROADCAST_TOPIC_CONFIG)]);
 const broadcastTopic = topicsManager.byName(BROADCAST_TOPIC_NAME)!;
 const ctx: ServerContext = {
   clients: clientsManager,
@@ -30,7 +32,7 @@ const ctx: ServerContext = {
   logger: wsConfig.log,
 };
 
-const server = Bun.serve<Client>({
+const server = Bun.serve<Client, typeof staticServe>({
   static: staticServe,
   websocket: {
     async message(ws, msg) {

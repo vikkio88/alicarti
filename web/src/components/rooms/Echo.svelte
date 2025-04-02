@@ -28,10 +28,10 @@
   };
 </script>
 
-<div class="f1 f c">
+<main class="c">
   <h1>Echo Room</h1>
   <form onsubmit={shout}>
-    <input type="text" bind:value={msg} placeholder="Message to echo"/>
+    <input type="text" bind:value={msg} placeholder="Message to echo" />
   </form>
   <h2>Echos</h2>
   <ul>
@@ -39,7 +39,7 @@
       <li>{message}</li>
     {/each}
   </ul>
-</div>
+</main>
 
 <style>
   input {

@@ -1,8 +1,6 @@
-import type { RoomConfig } from "../configs";
-
 export type ChatMessage = {
   message: string;
-  author: string;
+  author: { id: string; name?: string };
   timestamp: number;
 };
 

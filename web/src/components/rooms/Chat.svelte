@@ -22,23 +22,28 @@
   };
 </script>
 
-<h1>Chat Room</h1>
-<h2>{room.id}</h2>
-<div class="chat">
-  <ul>
-    {#each chatState.messages as message}
-      <li>
-        <div class="author" class:me={message.author === self.socketId}>
-          {message.author}
-        </div>
-        <div class="message">{message.message}</div>
-      </li>
-    {/each}
-  </ul>
-</div>
-<form onsubmit={sendMessage}>
-  <input type="text" placeholder="Message..." bind:value={message} />
-</form>
+<main class="c">
+  <h1>Chat Room</h1>
+  <h2>{room.id}</h2>
+  <div class="chat">
+    <ul>
+      {#each chatState.messages as message}
+        <li>
+          <div class="author" class:me={message.author.id === self.socketId}>
+            {#if room.admin === message.author.id}
+              {"[admin]"}
+            {/if}
+            {message.author.name || message.author.id}
+          </div>
+          <div class="message">{message.message}</div>
+        </li>
+      {/each}
+    </ul>
+  </div>
+  <form onsubmit={sendMessage}>
+    <input type="text" placeholder="Message..." bind:value={message} />
+  </form>
+</main>
 
 <style>
   .chat {

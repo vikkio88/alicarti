@@ -1,6 +1,7 @@
 import {
   cmdResult,
   Commands,
+  type JoinedRoomPayload,
   type Client,
   type CommandName,
   type CommandPayload,
@@ -20,16 +21,23 @@ export function handleRoomCreation(
   }
   const roomId = topicId();
   const roomType = payload.data.roomType;
-  const roomTopic = ctx.topics.create(roomId, true, roomType);
-  const roomLogic = ctx.topics.roomByName(roomId);
+
+  const roomTopic = ctx.topics.create({
+    name: roomId,
+    admin: ws.data.socketId,
+    type: roomType,
+    options: {
+      clientsCanPublish: false,
+    },
+  });
+  const roomLogic = ctx.topics.roomLogicByName(roomId);
   ctx.clients.joinTopic(roomTopic, ws);
   ctx.logger(
     `\tclient: ${ws.data.socketId} created room ${roomId}, type: ${payload.data.roomType}}`
   );
 
-  success(ws, Commands.CREATE_ROOM, {
-    id: roomId,
-    type: roomType,
+  success<JoinedRoomPayload<any>>(ws, Commands.CREATE_ROOM, {
+    room: roomTopic.room(),
     initialState: roomLogic?.state,
   });
 }
@@ -49,13 +57,12 @@ export function handleRoomJoining(
     return failure(ws, Commands.JOIN_ROOM, { roomId });
   }
 
-  const roomLogic = ctx.topics.roomByName(roomId);
+  const roomLogic = ctx.topics.roomLogicByName(roomId);
 
   ctx.clients.joinTopic(roomTopic, ws);
   ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
-  success(ws, Commands.JOIN_ROOM, {
-    id: roomId,
-    type: roomTopic.type,
+  success<JoinedRoomPayload<any>>(ws, Commands.JOIN_ROOM, {
+    room: roomTopic.room(),
     initialState: roomLogic?.state,
   });
 }

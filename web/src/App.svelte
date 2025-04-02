@@ -4,6 +4,8 @@
   import { ws } from "./store/wsState.svelte";
   import Nav from "./components/Nav.svelte";
   import Icon from "./components/shared/Icon.svelte";
+  import Snackbar from "./components/Snackbar.svelte";
+  import { uiState } from "./store/ui.svelte";
   onMount(() => () => ws.disconnect());
 </script>
 
@@ -11,10 +13,11 @@
 {#if ws.isConnected}
   <Main />
 {:else}
-  <div class="f1 f cc">
-    <button onclick={() => ws.connect()}><Icon name="connect" /> </button>
-  </div>
+  <main>
+    <div class="f1 f cc">
+      <button onclick={() => uiState.snackMessage("Ciao")}>Snack</button>
+      <button onclick={() => ws.connect()}><Icon name="connect" /> </button>
+    </div>
+  </main>
 {/if}
-
-<style>
-</style>
+<Snackbar />

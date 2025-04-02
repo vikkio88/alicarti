@@ -12,6 +12,4 @@
   let Room = componentsMap[room.type] || componentsMap[RoomTypes.echo];
 </script>
 
-<main>
-  <Room {room} {self} {initialState} />
-</main>
+<Room {room} {self} {initialState} />

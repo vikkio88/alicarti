@@ -4,9 +4,14 @@ body {
   font-family: Arial, sans-serif;
 }
 
+#app {
+  flex: 1;
+  display: flex;
+}
+
 main {
   flex: 1;
-  background: #f4f4f4;
+  margin-top: 3rem;
   padding: 20px;
   display: flex;
 }

@@ -1,6 +1,6 @@
 import type { Server, ServerWebSocket } from "bun";
 import type { ActionPayload, Client } from "@alicarti/shared";
-import { RoomTypes, type RoomType } from "@alicarti/shared/rooms";
+import { RoomTypes, type Room, type RoomType } from "@alicarti/shared/rooms";
 import type { StatefulRoom } from "../rooms/StatefulRoom";
 import { RoomFactory } from "../rooms/RoomFactory";
 
@@ -8,21 +8,34 @@ type TopicClientsUpdate = {
   clientsCount: number;
 };
 
+export type TopicInit = {
+  name: string;
+  type: RoomType;
+  admin?: string;
+  options: {
+    clientsCanPublish: boolean;
+  };
+};
+
 export class Topic {
+  #admin?: string;
   #name: string;
   #type: RoomType;
   #clients: string[];
   #clientsCanPublish: boolean;
 
-  constructor(
-    name: string,
-    clientsCanPublish: boolean = false,
-    type: RoomType = RoomTypes.broadcast
-  ) {
-    this.#name = name;
+  constructor(config: TopicInit) {
+    const {
+      name,
+      options: { clientsCanPublish },
+      type = RoomTypes.broadcast,
+      admin = undefined,
+    } = config;
     this.#clients = [];
-    this.#clientsCanPublish = clientsCanPublish;
+    this.#name = name;
     this.#type = type;
+    this.#admin = admin;
+    this.#clientsCanPublish = clientsCanPublish;
   }
 
   get clientsCount() {
@@ -56,21 +69,30 @@ export class Topic {
       ws.publish(this.name, message);
     }
   }
+
+  room(): Room {
+    return {
+      id: this.#name,
+      type: this.#type,
+      admin: this.#admin,
+    };
+  }
 }
 
 export class TopicManager {
   #topics: Record<string, Topic> = {};
-  #topicsRoom: Record<string, StatefulRoom<any> | null> = {};
+  #topicsRoomLogic: Record<string, StatefulRoom<any> | null> = {};
 
   constructor(topics: Topic[] = []) {
     for (const t of topics) this.#topics[t.name] = t;
   }
 
-  create(name: string, clientsCanPublish: boolean, type: RoomType): Topic {
-    this.#topics[name] = new Topic(name, clientsCanPublish, type);
-    const room = RoomFactory.make(type);
+  create(config: TopicInit): Topic {
+    const name = config.name;
+    this.#topics[name] = new Topic(config);
+    const room = RoomFactory.make(config.type);
     if (room) {
-      this.#topicsRoom[name] = room;
+      this.#topicsRoomLogic[name] = room;
     }
 
     return this.#topics[name];
@@ -81,8 +103,8 @@ export class TopicManager {
     if (!topic) return false;
     delete this.#topics[name];
 
-    if (this.#topicsRoom[name]) {
-      delete this.#topicsRoom[name];
+    if (this.#topicsRoomLogic[name]) {
+      delete this.#topicsRoomLogic[name];
     }
 
     return true;
@@ -92,8 +114,8 @@ export class TopicManager {
     return this.#topics[name] ?? null;
   }
 
-  roomByName<T>(name: string): StatefulRoom<T> | null {
-    return this.#topicsRoom[name] ?? null;
+  roomLogicByName<T>(name: string): StatefulRoom<T> | null {
+    return this.#topicsRoomLogic[name] ?? null;
   }
 
   getManyByName(topics: string[]): Topic[] {
