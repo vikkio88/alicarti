@@ -23,7 +23,7 @@ Here I am trying to recreate and finish the project with bun and svelte5.
     - [ ] FE
     - [ ] Trigger remotely
 - [ ] incremental state update
-- [ ] Decide where to put name on client
+- [x] Decide where to put name on client
 
 ## FE
 

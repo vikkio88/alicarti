@@ -5,11 +5,13 @@ import { connection } from "../libs/ws";
 type WsState = {
   roomId?: string;
   socketId?: string;
+  clientName?: string;
 };
 
 let s: WsState = $state({
   roomId: undefined,
   socketId: undefined,
+  clientName: undefined,
 });
 
 export const ws = {
@@ -18,6 +20,9 @@ export const ws = {
   },
   get socketId() {
     return s.socketId;
+  },
+  get displayName() {
+    return s.clientName || s.socketId;
   },
   get isConnected() {
     return Boolean(ws.socketId);
@@ -40,9 +45,11 @@ export const ws = {
   },
   connected(client: Client) {
     s.socketId = client.socketId;
+    s.clientName = client.name;
   },
   disconnected() {
     s.roomId = undefined;
     s.socketId = undefined;
+    s.clientName = undefined;
   },
 };

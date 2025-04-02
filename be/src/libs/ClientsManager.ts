@@ -3,6 +3,8 @@ import type { Client, CommandInfo } from "@alicarti/shared";
 import type { Topic } from "./Topic";
 import { clientId } from "./idGenerators";
 import type { RoomType } from "@alicarti/shared/rooms";
+import { r } from "./singletons";
+import { ANIMALS, COLORS } from "../data/names";
 
 export class ClientsManager {
   #clients: Record<string, string[]>;
@@ -59,9 +61,13 @@ export class ClientsManager {
     return {
       socketId: clientId(),
       createdAt: Date.now(),
-      name: "",
+      name: generateName(),
       availableCommands,
       availableRooms,
     };
   }
+}
+
+function generateName() {
+  return `${r.pickOne(COLORS)}_${r.pickOne(ANIMALS)}_${r.int(1, 100)}`;
 }

@@ -27,7 +27,7 @@
 
   <div>
     {#if ws.socketId}
-      {ws.socketId}
+      {ws.displayName}
       <button class="small" onclick={disconnect}>
         <Icon name="disconnect" />
       </button>
