@@ -1,5 +1,3 @@
-import type { RoomConfig } from "../configs";
-
 export type EchoRoomState = {
   messages: string[];
 };
