@@ -1,5 +1,5 @@
 import type { Server, ServerWebSocket } from "bun";
-import type { ActionPayload, Client } from "@alicarti/shared";
+import type { Client } from "@alicarti/shared";
 import { RoomTypes, type Room, type RoomType } from "@alicarti/shared/rooms";
 import type { StatefulRoom } from "../rooms/StatefulRoom";
 import { RoomFactory } from "../rooms/RoomFactory";
@@ -15,6 +15,7 @@ export type TopicInit = {
   options: {
     clientsCanPublish: boolean;
   };
+  config?: Record<string, any>;
 };
 
 export class Topic {
@@ -65,7 +66,6 @@ export class Topic {
 
   publish(ws: Server, message: string, isServer: boolean = true) {
     if (isServer || this.#clientsCanPublish) {
-      console.log(this.name, message);
       ws.publish(this.name, message);
     }
   }
@@ -87,10 +87,10 @@ export class TopicManager {
     for (const t of topics) this.#topics[t.name] = t;
   }
 
-  create(config: TopicInit): Topic {
-    const name = config.name;
-    this.#topics[name] = new Topic(config);
-    const room = RoomFactory.make(config.type);
+  create(initConfig: TopicInit): Topic {
+    const name = initConfig.name;
+    this.#topics[name] = new Topic(initConfig);
+    const room = RoomFactory.make(initConfig.type, initConfig);
     if (room) {
       this.#topicsRoomLogic[name] = room;
     }

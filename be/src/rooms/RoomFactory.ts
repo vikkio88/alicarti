@@ -1,19 +1,23 @@
-import { RoomTypes, type RoomType } from "@alicarti/shared/rooms";
+import { RoomTypes } from "@alicarti/shared/rooms";
 import { EchoRoom } from "./echo";
-import type { StatefulRoom } from "./StatefulRoom";
 import { ChatRoom } from "./chat";
+import { RPSRoom, type RPSRoomConfig } from "./rockpaperscissor";
+import type { TopicInit } from "../libs/Topic";
 
-const roomMap: Record<RoomType, () => StatefulRoom<any> | null> = {
+const roomMap = {
   [RoomTypes.echo]: () => new EchoRoom(),
   [RoomTypes.chat]: () => new ChatRoom(),
+  [RoomTypes.rockPaperScissor]: () => new RPSRoom(),
   [RoomTypes.broadcast]: () => null,
 };
 
 export class RoomFactory {
-  static make(type: RoomType): StatefulRoom<any> | null {
+  static make<K extends keyof typeof RoomTypes>(type: K, config?: TopicInit) {
     const make = roomMap[type];
-    if (!make) return null;
-
-    return make();
+    const logic = make();
+    if (logic && logic.hasSetup) {
+      logic.setup(config);
+    }
+    return logic;
   }
 }

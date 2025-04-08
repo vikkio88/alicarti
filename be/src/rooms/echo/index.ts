@@ -13,9 +13,11 @@ const initialState = () => ({
 });
 export class EchoRoom implements StatefulRoom<EchoRoomState> {
   state: EchoRoomState;
+  hasSetup: boolean = false;
   constructor() {
     this.state = { ...initialState() };
   }
+  setup(): void {}
   dispatch<TAction>(
     action: ActionPayload<TAction>,
     ws: ServerWebSocket<Client>,

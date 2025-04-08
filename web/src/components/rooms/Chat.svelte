@@ -1,6 +1,5 @@
 <script lang="ts">
   import {
-    chatRoomActions,
     type ChatRoomState,
     type SendMessagePayload,
   } from "@alicarti/shared/rooms/chat/config";

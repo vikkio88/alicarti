@@ -13,7 +13,7 @@ export const Commands = {
 
 export type CommandName = (typeof Commands)[keyof typeof Commands];
 
-export type JoinedRoomPayload<T> = {
+export type JoinedRoomResponsePayload<T> = {
   room: Room;
   initialState: T;
 };

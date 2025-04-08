@@ -4,6 +4,10 @@ import type { ServerContext } from "../servers/websocket";
 
 export interface StatefulRoom<TState> {
   state: TState;
+  hasSetup: boolean;
+
+  setup(config: unknown): void;
+
   dispatch<TAction>(
     action: ActionPayload<TAction>,
     ws: ServerWebSocket<Client>,

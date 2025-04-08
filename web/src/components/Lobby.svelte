@@ -29,6 +29,7 @@
         <select class="roomTypeSelect f1" name="roomType" bind:value={roomType}>
           <option>{RoomTypes.chat}</option>
           <option>{RoomTypes.echo}</option>
+          <option>{RoomTypes.rockPaperScissor}</option>
         </select>
       </div>
     </div>

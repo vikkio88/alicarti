@@ -1,7 +1,7 @@
 import {
   cmdResult,
   Commands,
-  type JoinedRoomPayload,
+  type JoinedRoomResponsePayload,
   type Client,
   type CommandName,
   type CommandPayload,
@@ -22,13 +22,16 @@ export function handleRoomCreation(
   const roomId = topicId();
   const roomType = payload.data.roomType;
 
+  const adminId = ws.data.socketId;
+
   const roomTopic = ctx.topics.create({
     name: roomId,
-    admin: ws.data.socketId,
+    admin: adminId,
     type: roomType,
     options: {
       clientsCanPublish: false,
     },
+    config: { ...payload.data.config },
   });
   const roomLogic = ctx.topics.roomLogicByName(roomId);
   ctx.clients.joinTopic(roomTopic, ws);
@@ -36,7 +39,7 @@ export function handleRoomCreation(
     `\tclient: ${ws.data.socketId} created room ${roomId}, type: ${payload.data.roomType}}`
   );
 
-  success<JoinedRoomPayload<any>>(ws, Commands.CREATE_ROOM, {
+  success<JoinedRoomResponsePayload<any>>(ws, Commands.CREATE_ROOM, {
     room: roomTopic.room(),
     initialState: roomLogic?.state,
   });
@@ -61,7 +64,7 @@ export function handleRoomJoining(
 
   ctx.clients.joinTopic(roomTopic, ws);
   ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
-  success<JoinedRoomPayload<any>>(ws, Commands.JOIN_ROOM, {
+  success<JoinedRoomResponsePayload<any>>(ws, Commands.JOIN_ROOM, {
     room: roomTopic.room(),
     initialState: roomLogic?.state,
   });
