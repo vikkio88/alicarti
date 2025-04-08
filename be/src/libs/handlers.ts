@@ -17,7 +17,6 @@ import {
 export function handleCommand(
   command: CommandPayload<any>,
   ws: ServerWebSocket<Client>,
-  message: CommandMessage<any>,
   ctx: ServerContext
 ) {
   switch (command.command) {

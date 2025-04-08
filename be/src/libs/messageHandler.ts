@@ -21,7 +21,7 @@ export function messageHandler(
 ) {
   if (isCommandMessage(message)) {
     const command = message.payload;
-    handleCommand(command, ws, message, ctx);
+    handleCommand(command, ws, ctx);
     return;
   }
 
