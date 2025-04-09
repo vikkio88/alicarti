@@ -8,14 +8,14 @@ type TopicClientsUpdate = {
   clientsCount: number;
 };
 
-export type TopicInit = {
+export type TopicConfig = {
   name: string;
   type: RoomType;
   admin?: string;
   options: {
     clientsCanPublish: boolean;
   };
-  config?: Record<string, any>;
+  config?: any;
 };
 
 export class Topic {
@@ -25,7 +25,7 @@ export class Topic {
   #clients: string[];
   #clientsCanPublish: boolean;
 
-  constructor(config: TopicInit) {
+  constructor(config: TopicConfig) {
     const {
       name,
       options: { clientsCanPublish },
@@ -87,10 +87,10 @@ export class TopicManager {
     for (const t of topics) this.#topics[t.name] = t;
   }
 
-  create(initConfig: TopicInit): Topic {
+  create(initConfig: TopicConfig): Topic {
     const name = initConfig.name;
     this.#topics[name] = new Topic(initConfig);
-    const room = RoomFactory.make(initConfig.type, initConfig);
+    const room = RoomFactory.make(initConfig);
     if (room) {
       this.#topicsRoomLogic[name] = room;
     }

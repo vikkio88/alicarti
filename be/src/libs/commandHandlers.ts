@@ -61,13 +61,13 @@ export function handleRoomJoining(
   }
 
   const roomLogic = ctx.topics.roomLogicByName(roomId);
-
   ctx.clients.joinTopic(roomTopic, ws);
   ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
   success<JoinedRoomResponsePayload<any>>(ws, Commands.JOIN_ROOM, {
     room: roomTopic.room(),
     initialState: roomLogic?.state,
   });
+  roomLogic?.onJoin(ws.data, ctx);
 }
 
 export function handleRoomLeaving(
@@ -92,6 +92,10 @@ export function handleRoomLeaving(
     // if there are no more clients left removing the room
     ctx.logger(`\tNo more clients in room: ${roomId}, removing it.`);
     ctx.topics.remove(roomId);
+  } else {
+    // only trigger the onLeave if there is someone left
+    const roomLogic = ctx.topics.roomLogicByName(roomId);
+    roomLogic?.onLeave(ws.data, ctx);
   }
 
   success(ws, Commands.LEAVE_ROOM, { roomId });

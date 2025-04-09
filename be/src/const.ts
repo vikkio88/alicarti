@@ -1,8 +1,8 @@
 import { RoomTypes } from "@alicarti/shared/rooms";
-import type { TopicInit } from "./libs/Topic";
+import type { TopicConfig } from "./libs/Topic";
 
 export const BROADCAST_TOPIC_NAME = "broadcast";
-export const BROADCAST_TOPIC_CONFIG: TopicInit = {
+export const BROADCAST_TOPIC_CONFIG: TopicConfig = {
   name: BROADCAST_TOPIC_NAME,
   type: RoomTypes.broadcast,
   admin: "server",

@@ -1,4 +1,4 @@
-import type { ActionPayload, Client } from "@alicarti/shared";
+import { stateUpdate, type ActionPayload, type Client } from "@alicarti/shared";
 import type {
   Phase,
   RPSGameState,
@@ -6,7 +6,8 @@ import type {
 import type { StatefulRoom } from "../StatefulRoom";
 import type { ServerWebSocket } from "bun";
 import type { ServerContext } from "../../servers/websocket";
-import type { TopicInit } from "../../libs/Topic";
+import type { TopicConfig } from "../../libs/Topic";
+import { createTextChangeRange } from "typescript";
 
 const initialState = (playerOne: string) => ({
   phase: "waiting" as Phase,
@@ -29,13 +30,25 @@ export type RPSRoomConfig = {
 };
 export class RPSRoom implements StatefulRoom<RPSGameState> {
   state: RPSGameState;
-  constructor() {
-    this.state = initialState("");
-  }
+  topicName: string;
   hasSetup: boolean = true;
+  constructor(topicName: string) {
+    this.state = initialState("");
+    this.topicName = topicName;
+  }
 
   setup(config: unknown) {
-    this.state.playersMap.one = (config as TopicInit).admin;
+    this.state.playersMap.one = (config as TopicConfig).admin;
+  }
+
+  onJoin(client: Client, ctx: ServerContext): void {
+    this.state.playersMap.two = client.socketId;
+    this.state.phase = "ready";
+    ctx.server?.publish(this.topicName, stateUpdate(this.state));
+  }
+
+  onLeave(): void {
+    //TODO: handle this
   }
 
   dispatch<TAction>(

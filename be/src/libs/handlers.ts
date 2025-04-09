@@ -1,7 +1,6 @@
 import {
   Commands,
   type Client,
-  type CommandMessage,
   type CommandPayload,
   type ActionPayload,
   stateUpdate,

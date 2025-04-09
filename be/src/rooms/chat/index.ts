@@ -15,12 +15,17 @@ const initialState = () => ({
 
 export class ChatRoom implements StatefulRoom<ChatRoomState> {
   state: ChatRoomState;
+  topicName: string;
   hasSetup: boolean = false;
-  constructor() {
-    this.state = initialState();
+
+  constructor(topicName: string) {
+    this.topicName = topicName;
+    this.state = { ...initialState() };
   }
   setup(): void {}
-  
+  onJoin(client: Client): void {}
+  onLeave(client: Client): void {}
+
   dispatch<TAction>(
     action: ActionPayload<TAction>,
     ws: ServerWebSocket<Client>,

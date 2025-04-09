@@ -94,6 +94,7 @@ export const connection = {
     });
   },
   addStateUpdater<T>(handler: (m: StateUpdateMessage<T>) => void) {
+    //TODO: cleanup message listener after leaving room
     ws?.addEventListener("message", (ev) => {
       const message = parseMessage(ev.data) as WsMessage<T>;
       if (message.type !== "state_update") {

@@ -1,20 +1,20 @@
 import { RoomTypes } from "@alicarti/shared/rooms";
 import { EchoRoom } from "./echo";
 import { ChatRoom } from "./chat";
-import { RPSRoom, type RPSRoomConfig } from "./rockpaperscissor";
-import type { TopicInit } from "../libs/Topic";
+import { RPSRoom } from "./rockpaperscissor";
+import type { TopicConfig } from "../libs/Topic";
 
 const roomMap = {
-  [RoomTypes.echo]: () => new EchoRoom(),
-  [RoomTypes.chat]: () => new ChatRoom(),
-  [RoomTypes.rockPaperScissor]: () => new RPSRoom(),
+  [RoomTypes.echo]: (topicName: string) => new EchoRoom(topicName),
+  [RoomTypes.chat]: (topicName: string) => new ChatRoom(topicName),
+  [RoomTypes.rockPaperScissor]: (topicName: string) => new RPSRoom(topicName),
   [RoomTypes.broadcast]: () => null,
 };
 
 export class RoomFactory {
-  static make<K extends keyof typeof RoomTypes>(type: K, config?: TopicInit) {
-    const make = roomMap[type];
-    const logic = make();
+  static make(config: TopicConfig) {
+    const make = roomMap[config.type];
+    const logic = make(config?.name ?? "");
     if (logic && logic.hasSetup) {
       logic.setup(config);
     }

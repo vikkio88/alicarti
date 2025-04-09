@@ -19,6 +19,7 @@ Here I am trying to recreate and finish the project with bun and svelte5.
 - [ ] Cleanup on room leaving
   - [x] Cleanup after everyone has left the room
   - [ ] Make someone else admin
+  - [ ] Remove state_update after leaving room
 - [ ] Global toast errors/info
     - [ ] FE
     - [ ] Trigger remotely
@@ -26,5 +27,8 @@ Here I am trying to recreate and finish the project with bun and svelte5.
 - [x] Decide where to put name on client
 
 ## FE
-
 - [ ] Global State for Connection and Room mgmt.
+
+## RPS
+- [ ] Autostart on 2 joined
+- [ ] Prevent more than 2 people to join as players

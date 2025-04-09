@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { TopicManager, type TopicInit } from "./Topic";
+import { TopicManager, type TopicConfig } from "./Topic";
 import { RoomTypes } from "@alicarti/shared/rooms";
 import type { EchoRoom } from "../rooms/echo";
 import type { ServerWebSocket } from "bun";
 import type { Client } from "@alicarti/shared";
 import type { ServerContext } from "../servers/websocket";
 
-const testInit = (name: string): TopicInit => ({
+const testInit = (name: string): TopicConfig => ({
   name,
   type: RoomTypes.echo,
   admin: "none",
