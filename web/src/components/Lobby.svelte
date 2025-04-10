@@ -5,7 +5,7 @@
   import { Commands } from "@alicarti/shared";
   import Icon from "./shared/Icon.svelte";
   let roomId: string = $state("");
-  let roomType: string = $state(RoomTypes.chat);
+  let roomType: string = $state(RoomTypes.rockPaperScissor);
   let canCreateRoom = check(connection.info().connection);
 
   let showJoin = $state(false);

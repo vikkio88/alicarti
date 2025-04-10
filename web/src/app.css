@@ -11,7 +11,7 @@ body {
 
 main {
   flex: 1;
-  margin-top: 3rem;
+  margin-top: 4rem;
   padding: 20px;
   display: flex;
 }

@@ -8,6 +8,7 @@
   import type { RoomProps } from "../props";
   import { connection } from "../../../libs/ws";
   import type { StateUpdateMessage } from "@alicarti/shared";
+  import Result from "./Result.svelte";
 
   let { room, self, initialState }: RoomProps<RPSGameState> = $props();
   let gameState = $state(initialState);
@@ -27,24 +28,51 @@
 </script>
 
 <main class="c">
-  <pre>{JSON.stringify(gameState, null, 2)}</pre>
-
   <div class="f cc">
     {#if isAdmin}
-      {#if gameState.phase === "ready"}
-        <button onclick={() => connection.action(room.id, "start")}>
-          Start
-        </button>
-      {/if}
-      {#if gameState.phase === "choosing" && everyoneHasChoosen}
-        <button onclick={() => console.log("reveal")}>Reveal</button>
-      {/if}
+      <div class="f cc">
+        {#if gameState.phase === "ready"}
+          <button onclick={() => connection.action(room.id, "start")}>
+            Start
+          </button>
+        {/if}
+
+        {#if gameState.phase === "display"}
+          <button onclick={() => connection.action(room.id, "start")}>
+            Next Round
+          </button>
+        {/if}
+
+        {#if gameState.phase === "choosing" && everyoneHasChoosen}
+          <button onclick={() => connection.action(room.id, "reveal")}>
+            Reveal
+          </button>
+        {/if}
+      </div>
     {/if}
     <!-- TODO: check if can stop changing after choosing or wait for reveal -->
-    {#if gameState.phase === "choosing"}
-      <button onclick={() => choose("rock")}>Rock</button>
-      <button onclick={() => choose("paper")}>Paper</button>
-      <button onclick={() => choose("scissor")}>Scissor</button>
+    {#if !isAdmin && everyoneHasChoosen && gameState.phase !== "display"}
+      <h1>Waiting for reveal...</h1>
+    {/if}
+
+    {#if gameState.phase === "display" && gameState.result}
+      <div class="f rc">
+        <Result
+          self={gameState.reversePlayersMap[self.socketId]}
+          score={gameState.score}
+          result={gameState.result}
+        />
+      </div>
+    {/if}
+
+    {#if gameState.phase === "choosing" && !everyoneHasChoosen}
+      <div class="f rc">
+        <button onclick={() => choose("rock")}>Rock</button>
+        <button onclick={() => choose("paper")}>Paper</button>
+        <button onclick={() => choose("scissor")}>Scissor</button>
+      </div>
     {/if}
   </div>
+
+  <pre>{JSON.stringify(gameState, null, 2)}</pre>
 </main>

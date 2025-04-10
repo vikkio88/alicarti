@@ -32,3 +32,5 @@ Here I am trying to recreate and finish the project with bun and svelte5.
 ## RPS
 - [ ] Autostart on 2 joined
 - [ ] Prevent more than 2 people to join as players
+- [ ] Implement game over
+- [ ] Handle people leaving
