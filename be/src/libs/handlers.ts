@@ -50,5 +50,6 @@ export function handleAction(
     return;
   }
   const newState = room.dispatch(action, ws, ctx);
+  console.log({ newState });
   topic.publish(ctx.server!, stateUpdate(newState));
 }

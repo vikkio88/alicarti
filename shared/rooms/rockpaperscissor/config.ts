@@ -1,11 +1,10 @@
 export type Phase =
   | "waiting"
   | "ready"
-  | "started"
-  | "over"
   | "choosing"
   | "display"
-  | "resolution";
+  | "resolution"
+  | "over";
 
 export type RPSGameState = {
   phase: Phase;
@@ -21,13 +20,14 @@ export type RPSGameState = {
   result?: { winner: "one" | "two"; draw: boolean };
 };
 
-export const rpsActions = ["choose"] as const;
+export const rpsActions = ["start", "choose"] as const;
 export type RPSActions = (typeof rpsActions)[number];
 
-export const Rock = "Rock";
+export const Rock = "rock";
 export const Paper = "paper";
 export const Scissor = "scissor";
-export const Moves = [Rock, Paper, Scissor];
+export const Moves = ["rock", "paper", "scissor"];
+export type Move = (typeof Moves)[number];
 export type Choose = {
-  move: (typeof Moves)[number];
+  move: Move;
 };
