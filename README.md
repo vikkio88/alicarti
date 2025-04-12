@@ -30,7 +30,7 @@ Here I am trying to recreate and finish the project with bun and svelte5.
 - [ ] Global State for Connection and Room mgmt.
 
 ## RPS
-- [ ] Autostart on 2 joined
-- [ ] Prevent more than 2 people to join as players
+- [x] Autostart on 2 joined
+- [x] Prevent more than 2 people to join as players
 - [ ] Implement game over
 - [ ] Handle people leaving

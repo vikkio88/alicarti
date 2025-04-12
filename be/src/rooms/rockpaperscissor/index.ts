@@ -10,6 +10,7 @@ import type { StatefulRoom } from "../StatefulRoom";
 import type { ServerWebSocket } from "bun";
 import type { ServerContext } from "../../servers/websocket";
 import type { TopicConfig } from "../../libs/Topic";
+import { calculateResult } from "./logic";
 
 const initialState = (playerOne: string): RPSGameState => ({
   phase: "waiting" as Phase,
@@ -51,6 +52,11 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
   }
 
   onJoin(client: Client, ctx: ServerContext): void {
+    if (this.state.playersMap.two) {
+      ctx.logger(`${client.socketId} joined as spectator`);
+      return;
+    }
+
     this.state.playersMap.two = client.socketId;
     this.state.reversePlayersMap[client.socketId] = "two";
     this.state.phase = "ready";
@@ -82,7 +88,7 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
       case "reveal": {
         const result = calculateResult(this.currentTurn);
         if (!result.draw) {
-          this.state.score[result.winner] += 1;
+          this.state.score[result.winner!] += 1;
         } else {
           this.state.score.draws += 1;
         }
@@ -99,23 +105,4 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
     }
     return this.state;
   }
-}
-
-const movesMatrix: Record<Move, Record<Move, -1 | 0 | 1>> = {
-  rock: { rock: 0, paper: -1, scissor: 1 },
-  paper: { rock: 1, paper: 0, scissor: -1 },
-  scissor: { rock: -1, paper: 1, scissor: 0 },
-};
-
-function calculateResult(currentTurn: { one?: Move; two?: Move }): {
-  winner: "one" | "two";
-  draw: boolean;
-} {
-  if (!currentTurn.one || !currentTurn.two) {
-    return { winner: "one", draw: true };
-  }
-
-  const draw = movesMatrix[currentTurn.one][currentTurn.two] === 0;
-  const winnerOne = movesMatrix[currentTurn.one][currentTurn.two] === 1;
-  return { winner: winnerOne ? "one" : "two", draw };
 }

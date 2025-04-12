@@ -1,7 +1,12 @@
 <script lang="ts">
+  import type {
+    Score,
+    RoundResult,
+  } from "@alicarti/shared/rooms/rockpaperscissor/config";
+
   type Props = {
-    result: { winner: "one" | "two"; draw: boolean };
-    score: { one: number; two: number; draws: number };
+    result: RoundResult;
+    score: Score;
     self: "one" | "two";
   };
 

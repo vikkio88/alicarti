@@ -10,17 +10,20 @@ export type RPSGameState = {
   phase: Phase;
   playersMap: Record<"one" | "two", string | undefined>;
   reversePlayersMap: Record<string, "one" | "two">;
-  score: {
-    one: number;
-    two: number;
-    draws: number;
-  };
+  score: Score;
   hasChosen: {
     one: boolean;
     two: boolean;
   };
-  result?: { winner: "one" | "two"; draw: boolean };
+  result?: RoundResult;
 };
+
+export type Score = {
+  one: number;
+  two: number;
+  draws: number;
+};
+export type RoundResult = { winner: "one" | "two" | null; draw: boolean };
 
 export const rpsActions = ["start", "choose", "reveal"] as const;
 export type RPSActions = (typeof rpsActions)[number];

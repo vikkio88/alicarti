@@ -2,7 +2,6 @@
   import type {
     Choose,
     Move,
-    RPSActions,
     RPSGameState,
   } from "@alicarti/shared/rooms/rockpaperscissor/config";
   import type { RoomProps } from "../props";
@@ -13,13 +12,16 @@
   let { room, self, initialState }: RoomProps<RPSGameState> = $props();
   let gameState = $state(initialState);
   connection.addStateUpdater((message: StateUpdateMessage<RPSGameState>) => {
-    console.log("state update", message);
     gameState = message.payload;
   });
 
   const choose = (move: Move) => {
     connection.action<Choose>(room.id, "choose", { move });
   };
+
+  let isPlayer = $derived(
+    Object.keys(gameState.reversePlayersMap).includes(self.socketId)
+  );
 
   let isAdmin = $derived(gameState.playersMap.one === self.socketId);
   let everyoneHasChoosen = $derived(
@@ -50,7 +52,7 @@
         {/if}
       </div>
     {/if}
-    <!-- TODO: check if can stop changing after choosing or wait for reveal -->
+
     {#if !isAdmin && everyoneHasChoosen && gameState.phase !== "display"}
       <h1>Waiting for reveal...</h1>
     {/if}
@@ -65,7 +67,7 @@
       </div>
     {/if}
 
-    {#if gameState.phase === "choosing" && !everyoneHasChoosen}
+    {#if isPlayer && gameState.phase === "choosing" && !everyoneHasChoosen}
       <div class="f rc">
         <button onclick={() => choose("rock")}>Rock</button>
         <button onclick={() => choose("paper")}>Paper</button>
