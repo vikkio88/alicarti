@@ -63,8 +63,17 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
     ctx.server?.publish(this.topicName, stateUpdate(this.state));
   }
 
-  onLeave(): void {
-    //TODO: handle this
+  onLeave(client: Client, ctx: ServerContext): void {
+    const player = this.state.reversePlayersMap[client.socketId];
+    if (!this.state.playersMap[player]) {
+      return;
+    }
+
+    this.state = initialState(
+      (player === "two" ? this.state.playersMap.one : this.state.playersMap.two)!
+    );
+    
+    // TODO: reverse player map
   }
 
   dispatch<TAction>(
@@ -75,6 +84,11 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
     switch (action.action as RPSActions) {
       case "start": {
         this.state.phase = "choosing";
+        break;
+      }
+      case "end": {
+        this.state.phase = "over";
+        this.state.result = undefined;
         break;
       }
       case "choose": {

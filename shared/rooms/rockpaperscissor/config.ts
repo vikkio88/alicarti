@@ -25,7 +25,7 @@ export type Score = {
 };
 export type RoundResult = { winner: "one" | "two" | null; draw: boolean };
 
-export const rpsActions = ["start", "choose", "reveal"] as const;
+export const rpsActions = ["start", "choose", "reveal", "end"] as const;
 export type RPSActions = (typeof rpsActions)[number];
 
 export const Rock = "rock";

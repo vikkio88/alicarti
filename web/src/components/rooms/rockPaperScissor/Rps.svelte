@@ -33,16 +33,21 @@
   <div class="f cc">
     {#if isAdmin}
       <div class="f cc">
-        {#if gameState.phase === "ready"}
+        {#if gameState.phase === "ready" || gameState.phase === "over"}
           <button onclick={() => connection.action(room.id, "start")}>
-            Start
+            Start Game
           </button>
         {/if}
 
         {#if gameState.phase === "display"}
-          <button onclick={() => connection.action(room.id, "start")}>
-            Next Round
-          </button>
+          <div class="f rc">
+            <button onclick={() => connection.action(room.id, "start")}>
+              Next Round
+            </button>
+            <button onclick={() => connection.action(room.id, "end")}>
+              End Game
+            </button>
+          </div>
         {/if}
 
         {#if gameState.phase === "choosing" && everyoneHasChoosen}
@@ -57,7 +62,7 @@
       <h1>Waiting for reveal...</h1>
     {/if}
 
-    {#if gameState.phase === "display" && gameState.result}
+    {#if gameState.phase === "display" || gameState.phase === "over"}
       <div class="f rc">
         <Result
           self={gameState.reversePlayersMap[self.socketId]}
