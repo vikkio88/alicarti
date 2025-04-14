@@ -22,13 +22,13 @@ describe("Topic Manager", () => {
     tm.create(testInit("ciao"));
     tm.create(testInit("ciao1"));
 
-    const r = tm.byName("ciao")?.logic! as EchoRoom;
+    const r = tm.byName("ciao")?.roomLogic! as EchoRoom;
     r.dispatch(
       { action: "shout", roomId: "ciao", data: { message: "ciao" } },
       {} as unknown as ServerWebSocket<Client>,
       { logger: () => {} } as unknown as ServerContext
     );
 
-    expect(tm.byName("ciao")?.logic).not.toEqual(tm.byName("ciao1")?.logic);
+    expect(tm.byName("ciao")?.roomLogic).not.toEqual(tm.byName("ciao1")?.roomLogic);
   });
 });

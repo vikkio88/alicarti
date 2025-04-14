@@ -13,6 +13,7 @@
     "nanoid": "^5.1.5"
   },
   "scripts": {
+    "start": "bun run ./src/index.ts",
     "dev": "bun run --watch ./src/index.ts",
     "check": "bunx tsc --noEmit -p tsconfig.json"
   }

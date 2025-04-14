@@ -15,6 +15,8 @@ import {
   CORS_HEADERS,
 } from "./const";
 
+const port = parseInt(Bun.argv.slice(2)[0]) || 3000;
+
 export type WsServerConfig = {
   log: (...strings: string[]) => void;
 };
@@ -33,6 +35,7 @@ const ctx: ServerContext = {
 };
 
 const server = Bun.serve<Client, typeof staticServe>({
+  port,
   static: staticServe,
   websocket: {
     async message(ws, msg) {
@@ -63,7 +66,7 @@ const server = Bun.serve<Client, typeof staticServe>({
   },
 });
 
-console.log(`Running on :${server.port}`);
+console.log(`Running on http://localhost:${server.port}`);
 process.on("SIGINT", () => {
   console.log("\nReceived SIGINT\nrunning cleanup...");
   // TODO: ctx cleanup?

@@ -33,7 +33,7 @@ export function handleRoomCreation(
     },
     config: { ...payload.data.config },
   });
-  const roomLogic = roomTopic.logic;
+  const roomLogic = roomTopic.roomLogic;
   ctx.clients.joinTopic(roomTopic, ws);
   ctx.logger(
     `\tclient: ${ws.data.socketId} created room ${roomId}, type: ${payload.data.roomType}}`
@@ -60,7 +60,7 @@ export function handleRoomJoining(
     return failure(ws, Commands.JOIN_ROOM, { roomId });
   }
 
-  const roomLogic = roomTopic.logic;
+  const roomLogic = roomTopic.roomLogic;
   ctx.clients.joinTopic(roomTopic, ws);
   ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
   success<JoinedRoomResponsePayload<any>>(ws, Commands.JOIN_ROOM, {
@@ -94,7 +94,7 @@ export function handleRoomLeaving(
     ctx.topics.remove(roomId);
   } else {
     // only trigger the onLeave if there is someone left
-    const roomLogic = roomTopic.logic;
+    const roomLogic = roomTopic.roomLogic;
     roomLogic?.onLeave(ws.data, ctx);
   }
 

@@ -12,7 +12,10 @@ import {
 
 type Cb = () => void;
 
-const WS_SERVER_URL = "http://localhost:3000";
+const { hostname, port: webPort } = window.location;
+const isDevMode = import.meta.env.MODE === "development";
+const port = isDevMode ? 3000 : webPort;
+const WS_SERVER_URL = `http://${hostname}:${port}`;
 
 export type WsEventListener = (
   ev: MessageEvent<any> | Event | CloseEvent

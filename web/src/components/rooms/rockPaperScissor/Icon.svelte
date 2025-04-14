@@ -7,7 +7,7 @@
   } from "svelte-awesome-icons";
   type Props = {
     move: Move;
-    size?: "18" | "24" | "32";
+    size?: "18" | "24" | "32" | "48";
   };
   const map = {
     rock: HandBackFistSolid,
@@ -15,7 +15,7 @@
     scissor: HandScissorsSolid,
   };
   let { move, size = "18" }: Props = $props();
-  let Ico = map[move];
+  let Ico = $derived(map[move]);
 </script>
 
 <Ico {size} />

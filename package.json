@@ -14,6 +14,8 @@
     "shared"
   ],
   "scripts": {
-    "dev": "bun --filter '*' dev"
+    "dev": "bun --filter '*' dev",
+    "check": "bun --filter '*' check",
+    "build": "rm -rf dist && cp -R be dist && cd web && bun run build && rm -rf ../dist/static && cp -r dist/ ../dist/static"
   }
 }

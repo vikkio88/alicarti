@@ -5,9 +5,19 @@ export const staticServe: Record<`/${string}`, Response> = {
       "Content-Type": "text/html",
     },
   }),
-  "/bundle.js": new Response(await Bun.file("./static/bundle.js").bytes(), {
+  "/assets/index.js": new Response(await Bun.file("./static/assets/index.js").bytes(), {
     headers: {
       "Content-Type": "text/javascript",
+    },
+  }),
+  "/assets/index.css": new Response(await Bun.file("./static/assets/index.css").bytes(), {
+    headers: {
+      "Content-Type": "text/css",
+    },
+  }),
+  "/style.css": new Response(await Bun.file("./static/style.css").bytes(), {
+    headers: {
+      "Content-Type": "text/css",
     },
   }),
 };

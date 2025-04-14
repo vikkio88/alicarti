@@ -24,7 +24,7 @@ export class Topic {
   #type: RoomType;
   #clients: string[];
   #clientsCanPublish: boolean;
-  logic?: StatefulRoom<any>;
+  roomLogic?: StatefulRoom<any>;
 
   constructor(config: TopicConfig) {
     const {
@@ -40,8 +40,8 @@ export class Topic {
     this.#clientsCanPublish = clientsCanPublish;
   }
 
-  setLogic<T>(room: StatefulRoom<T>) {
-    this.logic = room;
+  setRoomLogic<T>(room: StatefulRoom<T>) {
+    this.roomLogic = room;
   }
 
   get clientsCount() {
@@ -96,7 +96,7 @@ export class TopicManager {
     const newTopic = new Topic(initConfig);
     const room = RoomFactory.make(initConfig);
     if (room) {
-      newTopic.setLogic<any>(room);
+      newTopic.setRoomLogic<any>(room);
     }
     this.#topics[name] = newTopic;
 
