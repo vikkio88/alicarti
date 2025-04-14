@@ -44,7 +44,7 @@ export function handleAction(
     ctx.logger(`room ${action.roomId} does not exist`);
     return;
   }
-  const room = ctx.topics.roomLogicByName(action.roomId);
+  const room = topic.logic;
   if (!room) {
     ctx.logger(`room ${action.roomId} cannot handle ${action.action}`);
     return;

@@ -24,6 +24,7 @@ export class Topic {
   #type: RoomType;
   #clients: string[];
   #clientsCanPublish: boolean;
+  logic?: StatefulRoom<any>;
 
   constructor(config: TopicConfig) {
     const {
@@ -37,6 +38,10 @@ export class Topic {
     this.#type = type;
     this.#admin = admin;
     this.#clientsCanPublish = clientsCanPublish;
+  }
+
+  setLogic<T>(room: StatefulRoom<T>) {
+    this.logic = room;
   }
 
   get clientsCount() {
@@ -81,7 +86,6 @@ export class Topic {
 
 export class TopicManager {
   #topics: Record<string, Topic> = {};
-  #topicsRoomLogic: Record<string, StatefulRoom<any> | null> = {};
 
   constructor(topics: Topic[] = []) {
     for (const t of topics) this.#topics[t.name] = t;
@@ -89,11 +93,12 @@ export class TopicManager {
 
   create(initConfig: TopicConfig): Topic {
     const name = initConfig.name;
-    this.#topics[name] = new Topic(initConfig);
+    const newTopic = new Topic(initConfig);
     const room = RoomFactory.make(initConfig);
     if (room) {
-      this.#topicsRoomLogic[name] = room;
+      newTopic.setLogic<any>(room);
     }
+    this.#topics[name] = newTopic;
 
     return this.#topics[name];
   }
@@ -103,19 +108,11 @@ export class TopicManager {
     if (!topic) return false;
     delete this.#topics[name];
 
-    if (this.#topicsRoomLogic[name]) {
-      delete this.#topicsRoomLogic[name];
-    }
-
     return true;
   }
 
   byName(name: string): Topic | null {
     return this.#topics[name] ?? null;
-  }
-
-  roomLogicByName<T>(name: string): StatefulRoom<T> | null {
-    return this.#topicsRoomLogic[name] ?? null;
   }
 
   getManyByName(topics: string[]): Topic[] {
