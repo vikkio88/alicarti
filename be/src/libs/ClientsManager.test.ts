@@ -2,20 +2,20 @@ import { describe, expect, it, beforeEach } from "bun:test";
 import type { ServerWebSocket } from "bun";
 import type { Client } from "@alicarti/shared";
 import { ClientsManager } from "./ClientsManager";
-import type { Topic } from "./Topic";
+import { Topic } from "./Topic";
+import { RoomTypes } from "@alicarti/shared/rooms";
 
-class MockTopic {
-  name: string;
-  subscribers: Set<ServerWebSocket<Client>>;
-  constructor(name: string) {
-    this.name = name;
-    this.subscribers = new Set();
-  }
-  subscribe(ws: ServerWebSocket<Client>) {
+class MockTopic extends Topic {
+  subscribers: Set<ServerWebSocket<Client>> = new Set();
+
+  join(ws: ServerWebSocket<Client>) {
     this.subscribers.add(ws);
+
+    return { clientsCount: this.subscribers.size };
   }
-  unsubscribe(ws: ServerWebSocket<Client>) {
+  leave(ws: ServerWebSocket<Client>) {
     this.subscribers.delete(ws);
+    return { clientsCount: this.subscribers.size };
   }
 }
 
@@ -27,7 +27,13 @@ describe("ClientsManager", () => {
   beforeEach(() => {
     clientsManager = new ClientsManager();
     mockWs = { data: { socketId: "123" } } as ServerWebSocket<Client>;
-    topic = new MockTopic("test-topic") as unknown as Topic;
+    topic = new MockTopic({
+      name: "test-topic",
+      type: RoomTypes.broadcast,
+      options: {
+        clientsCanPublish: false,
+      },
+    });
   });
 
   it("should add a client on connect", () => {

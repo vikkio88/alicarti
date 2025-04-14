@@ -15,8 +15,7 @@
 {:else}
   <main>
     <div class="f1 f cc">
-      <button onclick={() => uiState.snackMessage("Ciao")}>Snack</button>
-      <button onclick={() => ws.connect()}><Icon name="connect" /> </button>
+      <button data-tooltip="Connect" onclick={() => ws.connect()}><Icon name="connect" /> </button>
     </div>
   </main>
 {/if}

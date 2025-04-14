@@ -8,6 +8,9 @@
   import { connection } from "../../../libs/ws";
   import type { StateUpdateMessage } from "@alicarti/shared";
   import Result from "./Result.svelte";
+  import RPSIcon from "./Icon.svelte";
+  import AdminPanel from "./AdminPanel.svelte";
+  import Spinner from "./Spinner.svelte";
 
   let { room, self, initialState }: RoomProps<RPSGameState> = $props();
   let gameState = $state(initialState);
@@ -30,36 +33,25 @@
 </script>
 
 <main class="c">
-  <div class="f cc">
+  <div class="f1 f cc">
+    <!-- TODO: add copiable link to room in case you are waiting -->
     {#if isAdmin}
-      <div class="f cc">
-        {#if gameState.phase === "ready" || gameState.phase === "over"}
-          <button onclick={() => connection.action(room.id, "start")}>
-            Start Game
-          </button>
-        {/if}
+      <AdminPanel {gameState} {everyoneHasChoosen} roomId={room.id} />
+    {/if}
 
-        {#if gameState.phase === "display"}
-          <div class="f rc">
-            <button onclick={() => connection.action(room.id, "start")}>
-              Next Round
-            </button>
-            <button onclick={() => connection.action(room.id, "end")}>
-              End Game
-            </button>
-          </div>
-        {/if}
+    {#if gameState.phase === "waiting"}
+      <h1>Waiting for the right number of players...</h1>
+      <Spinner />
+    {/if}
 
-        {#if gameState.phase === "choosing" && everyoneHasChoosen}
-          <button onclick={() => connection.action(room.id, "reveal")}>
-            Reveal
-          </button>
-        {/if}
-      </div>
+    {#if gameState.phase === "ready"}
+      <h1>Ready!</h1>
+      <Spinner />
     {/if}
 
     {#if !isAdmin && everyoneHasChoosen && gameState.phase !== "display"}
       <h1>Waiting for reveal...</h1>
+      <Spinner />
     {/if}
 
     {#if gameState.phase === "display" || gameState.phase === "over"}
@@ -73,13 +65,19 @@
     {/if}
 
     {#if isPlayer && gameState.phase === "choosing" && !everyoneHasChoosen}
-      <div class="f rc">
-        <button onclick={() => choose("rock")}>Rock</button>
-        <button onclick={() => choose("paper")}>Paper</button>
-        <button onclick={() => choose("scissor")}>Scissor</button>
+      <div class="f rc g_5">
+        <button onclick={() => choose("rock")}>
+          <RPSIcon move={"rock"} />
+        </button>
+        <button onclick={() => choose("paper")}>
+          <RPSIcon move={"paper"} />
+        </button>
+        <button onclick={() => choose("scissor")}>
+          <RPSIcon move={"scissor"} />
+        </button>
       </div>
     {/if}
   </div>
 
-  <pre>{JSON.stringify(gameState, null, 2)}</pre>
+  <!-- <pre>{JSON.stringify(gameState, null, 2)}</pre> -->
 </main>

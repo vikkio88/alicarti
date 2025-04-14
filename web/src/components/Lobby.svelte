@@ -12,7 +12,31 @@
 </script>
 
 <main>
-  <div class="f1 f cc">
+  <div class="f1 f cc g">
+    <div class="f rc mg g_5">
+      {#if showJoin}
+        <input type="text" bind:value={roomId} placeholder="Room id" />
+        <button
+          class="f1"
+          data-tooltip="Join"
+          disabled={roomId.length < 3}
+          onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
+        >
+          <Icon name="enter" />
+        </button>
+      {/if}
+      <button
+        class="f r g_5"
+        data-tooltip={!showJoin ? "Join Room" : "Cancel"}
+        onclick={() => (showJoin = !showJoin)}
+      >
+        {#if showJoin}
+          <Icon name="x" />
+        {:else}
+          <Icon name="enter" /> Room
+        {/if}
+      </button>
+    </div>
     <div class="f r g_5">
       <button
         class="f rc g_5"
@@ -32,25 +56,6 @@
           <option>{RoomTypes.rockPaperScissor}</option>
         </select>
       </div>
-    </div>
-    <div class="f rc mg g_5">
-      {#if showJoin}
-        <input type="text" bind:value={roomId} placeholder="Room id" />
-        <button
-          class="f1"
-          disabled={roomId.length < 3}
-          onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
-        >
-          <Icon name="enter" />
-        </button>
-      {/if}
-      <button class="f1 f rc g_5" onclick={() => (showJoin = !showJoin)}>
-        {#if showJoin}
-          <Icon name="x" />
-        {:else}
-          <Icon name="enter" /> Room
-        {/if}
-      </button>
     </div>
   </div>
 </main>

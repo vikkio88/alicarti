@@ -3,6 +3,7 @@
     Score,
     RoundResult,
   } from "@alicarti/shared/rooms/rockpaperscissor/config";
+  import RPSIcon from "./Icon.svelte";
 
   type Props = {
     result?: RoundResult;
@@ -11,10 +12,17 @@
   };
 
   let { result, score, self }: Props = $props();
+  let other: "one" | "two" = self === "one" ? "two" : "one";
 </script>
 
 <div class="f cc">
   {#if result}
+    {#if result.moves}
+      <h2>You</h2>
+      <RPSIcon move={result.moves[self]} />
+      <h2>Them: {`${result.moves[other]}`}</h2>
+      <RPSIcon move={result.moves[other]} />
+    {/if}
     {#if result.draw}
       <h2>Draw</h2>
     {:else if result.winner === self}

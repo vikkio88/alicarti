@@ -64,16 +64,21 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
   }
 
   onLeave(client: Client, ctx: ServerContext): void {
-    const player = this.state.reversePlayersMap[client.socketId];
-    if (!this.state.playersMap[player]) {
+    const leaverId = client.socketId;
+    const leavingPlayer = this.state.reversePlayersMap[leaverId];
+    if (!this.state.playersMap[leavingPlayer]) {
+      ctx.logger(`${leaverId} left the RPS room, but was not a player`);
       return;
     }
 
-    this.state = initialState(
-      (player === "two" ? this.state.playersMap.one : this.state.playersMap.two)!
-    );
-    
-    // TODO: reverse player map
+    const remainingPlayerId = (
+      leavingPlayer === "two"
+        ? this.state.playersMap.one
+        : this.state.playersMap.two
+    )!;
+    this.state = initialState(remainingPlayerId);
+    this.state.reversePlayersMap[remainingPlayerId] = "one";
+    ctx.server?.publish(this.topicName, stateUpdate(this.state));
   }
 
   dispatch<TAction>(

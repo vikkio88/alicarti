@@ -17,7 +17,13 @@ export function calculateResult(currentTurn: {
     return { winner: "one", draw: true };
   }
 
-  const draw = movesMatrix[currentTurn.one][currentTurn.two] === 0;
-  const winnerOne = movesMatrix[currentTurn.one][currentTurn.two] === 1;
-  return { winner: draw ? null : winnerOne ? "one" : "two", draw };
+  const { one, two } = currentTurn;
+
+  const draw = movesMatrix[one][two] === 0;
+  const winnerOne = movesMatrix[one][two] === 1;
+  return {
+    winner: draw ? null : winnerOne ? "one" : "two",
+    draw,
+    moves: { one, two },
+  };
 }

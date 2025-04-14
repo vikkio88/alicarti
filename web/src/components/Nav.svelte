@@ -3,11 +3,15 @@
   import { connection } from "../libs/ws";
   import { ws } from "../store/wsState.svelte";
   import Icon from "./shared/Icon.svelte";
+  import { copyToClipboard } from "../libs/clipboard";
+  import { uiState } from "../store/ui.svelte";
 
   const disconnect = () => {
     connection.close();
     ws.disconnected();
   };
+
+  let showName = $state(true);
 </script>
 
 <div class="top" class:withItems={Boolean(ws.socketId)}>
@@ -21,13 +25,27 @@
       >
         <Icon name="exit" />
       </button>
-      {ws.roomId}
+      <button
+        class="n-btn"
+        onclick={() =>
+          copyToClipboard(ws.roomId ?? "", () =>
+            uiState.snackMessage("Copied to Clipboard")
+          )}
+      >
+        {ws.roomId}
+      </button>
     {/if}
   </div>
 
   <div>
     {#if ws.socketId}
-      {ws.displayName}
+      <button class="n-btn" onclick={() => (showName = !showName)}>
+        {#if showName}
+          {ws.displayName}
+        {:else}
+          {ws.socketId}
+        {/if}
+      </button>
       <button class="small" onclick={disconnect}>
         <Icon name="disconnect" />
       </button>
