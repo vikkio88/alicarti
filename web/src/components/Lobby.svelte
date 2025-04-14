@@ -15,15 +15,24 @@
   <div class="f1 f cc g">
     <div class="f rc mg g_5">
       {#if showJoin}
-        <input type="text" bind:value={roomId} placeholder="Room id" />
-        <button
-          class="f1"
-          data-tooltip="Join"
-          disabled={roomId.length < 3}
-          onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
+        <form
+          class="f rc mg g_5"
+          onsubmit={(e) => {
+            e.preventDefault();
+            if (roomId.length < 3) return;
+            connection.command(Commands.JOIN_ROOM, { roomId });
+          }}
         >
-          <Icon name="enter" />
-        </button>
+          <input type="text" bind:value={roomId} placeholder="Room id" />
+          <button
+            class="f1"
+            data-tooltip="Join"
+            disabled={roomId.length < 3}
+            onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
+          >
+            <Icon name="enter" />
+          </button>
+        </form>
       {/if}
       <button
         class="f r g_5"
