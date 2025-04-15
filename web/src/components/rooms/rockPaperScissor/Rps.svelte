@@ -27,20 +27,16 @@
   );
 
   let isAdmin = $derived(gameState.playersMap.one === self.socketId);
-  let everyoneHasChoosen = $derived(
-    gameState.hasChosen.one && gameState.hasChosen.two
-  );
+  let hasOneChoosen = $derived(gameState.hasChosen.one);
+  let hasTwoChoosen = $derived(gameState.hasChosen.two);
+  let everyoneHasChoosen = $derived(hasOneChoosen && hasTwoChoosen);
 </script>
 
 <main class="c">
   <div class="f1 f cc">
-    <!-- TODO: add copiable link to room in case you are waiting -->
-    {#if isAdmin}
-      <AdminPanel {gameState} {everyoneHasChoosen} roomId={room.id} />
-    {/if}
-
     {#if gameState.phase === "waiting"}
-      <h1>Waiting for the right number of players...</h1>
+      <!-- TODO: add copiable link to room in case you are waiting -->
+      <h1>Waiting for one more player...</h1>
       <Spinner />
     {/if}
 
@@ -60,8 +56,13 @@
           self={gameState.reversePlayersMap[self.socketId]}
           score={gameState.score}
           result={gameState.result}
+          phase={gameState.phase}
         />
       </div>
+    {/if}
+
+    {#if isAdmin}
+      <AdminPanel {gameState} {everyoneHasChoosen} roomId={room.id} />
     {/if}
 
     {#if isPlayer && gameState.phase === "choosing" && !everyoneHasChoosen}
@@ -75,6 +76,15 @@
         <button onclick={() => choose("scissor")}>
           <RPSIcon move={"scissor"} />
         </button>
+      </div>
+    {/if}
+    {#if (hasOneChoosen || hasTwoChoosen) && !everyoneHasChoosen}
+      <div class="mg">
+        {#if isAdmin && hasTwoChoosen}
+          <h2>Player two has choosen</h2>
+        {:else if !isAdmin && hasOneChoosen}
+          <h2>Player one has choosen</h2>
+        {/if}
       </div>
     {/if}
   </div>

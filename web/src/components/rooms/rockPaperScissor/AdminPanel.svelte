@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { RPSGameState } from "@alicarti/shared/rooms/rockpaperscissor/config";
   import { connection } from "../../../libs/ws";
-  import type { Room } from "@alicarti/shared/rooms";
 
   type Props = {
     gameState: RPSGameState;
@@ -9,12 +8,22 @@
     everyoneHasChoosen: boolean;
   };
   let { gameState, roomId, everyoneHasChoosen }: Props = $props();
+
+  let startHeader = $derived(
+    gameState.phase === "over" ? "Start Over" : "Start"
+  );
 </script>
 
-<div class="f cc">
+<div class="f cc mg">
   {#if gameState.phase === "ready" || gameState.phase === "over"}
-    <button onclick={() => connection.action(roomId, "start")}>
-      Start Game
+    <button
+      onclick={() =>
+        connection.action(
+          roomId,
+          gameState.phase === "over" ? "restart" : "start"
+        )}
+    >
+      {startHeader}
     </button>
   {/if}
 

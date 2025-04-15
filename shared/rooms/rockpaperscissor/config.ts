@@ -29,7 +29,13 @@ export type RoundResult = {
   moves?: { one: Move; two: Move };
 };
 
-export const rpsActions = ["start", "choose", "reveal", "end"] as const;
+export const rpsActions = [
+  "start",
+  "restart",
+  "choose",
+  "reveal",
+  "end",
+] as const;
 export type RPSActions = (typeof rpsActions)[number];
 
 export const Rock = "rock";

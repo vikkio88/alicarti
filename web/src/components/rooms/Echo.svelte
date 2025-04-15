@@ -15,7 +15,6 @@
   });
 
   connection.addStateUpdater((message: StateUpdateMessage<EchoRoomState>) => {
-    console.log(message);
     roomState = message.payload;
   });
 

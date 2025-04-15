@@ -89,6 +89,13 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
     switch (action.action as RPSActions) {
       case "start": {
         this.state.phase = "choosing";
+        
+        break;
+      }
+      // this is to reset the score on Start Over
+      case "restart": {
+        this.state.phase = "choosing";
+        this.state.score = { one: 0, two: 0, draws: 0 };
         break;
       }
       case "end": {
