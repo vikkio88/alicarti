@@ -11,6 +11,7 @@
   import RPSIcon from "./Icon.svelte";
   import AdminPanel from "./AdminPanel.svelte";
   import Spinner from "./Spinner.svelte";
+  import RoomInfo from "../../shared/RoomInfo.svelte";
 
   let { room, self, initialState }: RoomProps<RPSGameState> = $props();
   let gameState = $state(initialState);
@@ -35,7 +36,7 @@
 <main class="c">
   <div class="f1 f cc">
     {#if gameState.phase === "waiting"}
-      <!-- TODO: add copiable link to room in case you are waiting -->
+      <RoomInfo {room} />
       <h1>Waiting for one more player...</h1>
       <Spinner />
     {/if}

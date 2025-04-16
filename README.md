@@ -13,9 +13,9 @@ Here I am trying to recreate and finish the project with bun and svelte5.
 - [ ] Setup room with Game on
   - [x] Fix tests
   - [x] Room Type will link what the state to update looks like
-  - [ ] Chat room
-  - [ ] Adding names to rooms and clients instead of only ids
-  - [ ] Allow clients to specify what type of room they support
+  - [x] Chat room
+  - [x] Adding names to rooms and clients instead of only ids
+  - [x] Allow clients to specify what type of room they support
 - [ ] Cleanup on room leaving
   - [x] Cleanup after everyone has left the room
   - [ ] Make someone else admin
@@ -32,5 +32,6 @@ Here I am trying to recreate and finish the project with bun and svelte5.
 ## RPS
 - [x] Autostart on 2 joined
 - [x] Prevent more than 2 people to join as players
-- [ ] Implement game over
+- [x] Implement game over
+- [ ] Implement better UI for spectator
 - [ ] Handle people leaving
