@@ -42,7 +42,7 @@
   <h3>{label2}</h3>
 {/snippet}
 
-<div class="f cc">
+<div class="f cc mg">
   {#if result}
     {#if result.moves}
       <div class="f rc mg g">
@@ -50,8 +50,8 @@
           {@render move("You", result.moves[self])}
           {@render move("Them", result.moves[other])}
         {:else if result.moves && !isPlayer}
-          {@render move("Player One", result.moves.one)}
-          {@render move("Player Two", result.moves.two)}
+          {@render move("Player 1", result.moves.one)}
+          {@render move("Player 2", result.moves.two)}
         {/if}
       </div>
     {/if}
@@ -82,12 +82,12 @@
       {#if isPlayer}
         {@render total(score[self], score[self === "one" ? "two" : "one"])}
       {:else}
-        {@render total(score.one, score.two, "Player One", "Player Two")}
+        {@render total(score.one, score.two, "Player 1", "Player 2")}
       {/if}
     </div>
-    <h2>
+    <h3>
       Draws: {score.draws}
-    </h2>
+    </h3>
   </div>
 </div>
 

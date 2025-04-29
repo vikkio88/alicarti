@@ -51,10 +51,10 @@
       <Spinner />
     {/if}
 
-    {#if gameState.phase === "display" || gameState.phase === "over"}
+    {#if gameState.phase === "display" || gameState.phase === "over" || !isPlayer}
       <div class="f rc">
         <Result
-          isPlayer={isPlayer}
+          {isPlayer}
           self={gameState.reversePlayersMap[self.socketId]}
           score={gameState.score}
           result={gameState.result}
@@ -63,7 +63,7 @@
       </div>
     {/if}
 
-    {#if isAdmin}
+    {#if isAdmin || !isPlayer}
       <AdminPanel {gameState} {everyoneHasChoosen} roomId={room.id} />
     {/if}
 
