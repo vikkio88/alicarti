@@ -54,6 +54,7 @@
     {#if gameState.phase === "display" || gameState.phase === "over"}
       <div class="f rc">
         <Result
+          isPlayer={isPlayer}
           self={gameState.reversePlayersMap[self.socketId]}
           score={gameState.score}
           result={gameState.result}
