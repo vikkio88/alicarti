@@ -35,6 +35,10 @@
 
 <main class="c">
   <div class="f1 f cc">
+    {#if isAdmin || !isPlayer}
+      <AdminPanel {gameState} {everyoneHasChoosen} roomId={room.id} {isAdmin} />
+    {/if}
+
     {#if gameState.phase === "waiting"}
       <RoomInfo {room} />
       <h1>Waiting for one more player...</h1>
@@ -61,10 +65,6 @@
           phase={gameState.phase}
         />
       </div>
-    {/if}
-
-    {#if isAdmin || !isPlayer}
-      <AdminPanel {gameState} {everyoneHasChoosen} roomId={room.id} />
     {/if}
 
     {#if isPlayer && gameState.phase === "choosing" && !everyoneHasChoosen}

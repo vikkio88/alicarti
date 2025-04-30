@@ -3,18 +3,23 @@
   import { connection } from "../../../libs/ws";
 
   type Props = {
+    isAdmin: boolean;
     gameState: RPSGameState;
     roomId: string;
     everyoneHasChoosen: boolean;
   };
-  let { gameState, roomId, everyoneHasChoosen }: Props = $props();
+  let { gameState, roomId, everyoneHasChoosen, isAdmin }: Props = $props();
 
   let startHeader = $derived(
-    gameState.phase === "over" ? "Start Over" : "Start"
+    gameState.phase === "over" ? "Restart Game" : "Start Game"
   );
 </script>
 
 <div class="f cc mg">
+  {#if !isAdmin}
+    <!-- This can be used to switch players and spectator in case -->
+    <h2>Spectator Mode</h2>
+  {/if}
   {#if gameState.phase === "ready" || gameState.phase === "over"}
     <button
       onclick={() =>
