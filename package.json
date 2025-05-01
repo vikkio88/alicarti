@@ -16,6 +16,7 @@
   "scripts": {
     "dev": "bun --filter '*' dev",
     "check": "bun --filter '*' check",
+    "start": "cd dist && bun start",
     "build": "rm -rf dist && cp -R be dist && cd web && bun run build && rm -rf ../dist/static && cp -r dist/ ../dist/static"
   }
 }
