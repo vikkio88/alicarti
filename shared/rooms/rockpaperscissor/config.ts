@@ -1,3 +1,5 @@
+import type { ClientDTO } from "../../Client";
+
 export type Phase =
   | "waiting"
   | "ready"
@@ -8,6 +10,7 @@ export type Phase =
 
 export type RPSGameState = {
   phase: Phase;
+  clients: ClientDTO[],
   playersMap: Record<"one" | "two", string | undefined>;
   reversePlayersMap: Record<string, "one" | "two">;
   score: Score;
@@ -32,6 +35,7 @@ export type RoundResult = {
 export const rpsActions = [
   "start",
   "restart",
+  "assignRole",
   "choose",
   "reveal",
   "end",
@@ -45,4 +49,8 @@ export const Moves = ["rock", "paper", "scissor"];
 export type Move = "rock" | "paper" | "scissor";
 export type Choose = {
   move: Move;
+};
+export type AssignedRole = {
+  clientId: string;
+  role: "spectator" | "playerTwo";
 };

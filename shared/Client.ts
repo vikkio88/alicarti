@@ -8,3 +8,18 @@ export type Client = {
   availableCommands: CommandInfo[];
   availableRooms: RoomType[];
 };
+
+export type ClientDTO = {
+  socketId: string;
+  name?: string;
+  createdAt: number;
+};
+
+export function dto(client: Client): ClientDTO {
+  const { socketId, name, createdAt } = client;
+  return {
+    socketId,
+    name,
+    createdAt,
+  };
+}

@@ -1,5 +1,11 @@
-import { stateUpdate, type ActionPayload, type Client } from "@alicarti/shared";
 import {
+  dto,
+  stateUpdate,
+  type ActionPayload,
+  type Client,
+} from "@alicarti/shared";
+import {
+  type AssignedRole,
   type Choose,
   type Move,
   type Phase,
@@ -11,9 +17,11 @@ import type { ServerWebSocket } from "bun";
 import type { ServerContext } from "../../servers/websocket";
 import type { TopicConfig } from "../../libs/Topic";
 import { calculateResult } from "./logic";
+import { choose, end, restart, reveal, start } from "./stateTransitions";
 
 const initialState = (playerOne: string): RPSGameState => ({
   phase: "waiting" as Phase,
+  clients: [],
   playersMap: {
     one: playerOne,
     two: undefined,
@@ -33,12 +41,14 @@ const initialState = (playerOne: string): RPSGameState => ({
 export type RPSRoomConfig = {
   adminId: string;
 };
+
+export type CurrentTurn = { one?: Move; two?: Move };
 export class RPSRoom implements StatefulRoom<RPSGameState> {
   state: RPSGameState;
   topicName: string;
   hasSetup: boolean = true;
 
-  currentTurn: { one?: Move; two?: Move } = { one: undefined, two: undefined };
+  currentTurn: CurrentTurn = { one: undefined, two: undefined };
 
   constructor(topicName: string) {
     this.state = initialState("");
@@ -52,6 +62,8 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
   }
 
   onJoin(client: Client, ctx: ServerContext): void {
+    this.state.clients.push(dto(client));
+
     if (this.state.playersMap.two) {
       ctx.logger(`${client.socketId} joined as spectator`);
       return;
@@ -88,41 +100,43 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
   ): RPSGameState {
     switch (action.action as RPSActions) {
       case "start": {
-        this.state.phase = "choosing";
-        
+        this.state = start(this.state);
         break;
       }
-      // this is to reset the score on Start Over
       case "restart": {
-        this.state.phase = "choosing";
-        this.state.score = { one: 0, two: 0, draws: 0 };
+        this.state = restart(this.state);
         break;
       }
       case "end": {
-        this.state.phase = "over";
-        this.state.result = undefined;
+        this.state = end(this.state);
         break;
       }
       case "choose": {
-        const { move } = action.data as Choose;
         const client = ws.data.socketId;
-        const player = this.state.playersMap.one === client ? "one" : "two";
-        this.state.hasChosen[player] = true;
-        this.currentTurn[player] = move;
+        const [newState, newCurrentTurn] = choose(
+          this.state,
+          this.currentTurn,
+          client,
+          action.data as Choose
+        );
+        this.state = newState;
+        this.currentTurn = newCurrentTurn;
         break;
       }
       case "reveal": {
-        const result = calculateResult(this.currentTurn);
-        if (!result.draw) {
-          this.state.score[result.winner!] += 1;
-        } else {
-          this.state.score.draws += 1;
-        }
+        const [newState, newCurrentTurn] = reveal(
+          this.state,
+          this.currentTurn,
+        );
+        this.state = newState;
+        this.currentTurn = newCurrentTurn;
+      
+        break;
+      }
+      case "assignRole": {
+        const assignment = action.data as AssignedRole;
+        console.log(assignment);
 
-        this.state.result = result;
-        this.state.phase = "display";
-        this.currentTurn = { one: undefined, two: undefined };
-        this.state.hasChosen = { one: false, two: false };
         break;
       }
       default: {
