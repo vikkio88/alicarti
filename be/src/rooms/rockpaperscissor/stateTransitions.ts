@@ -1,9 +1,47 @@
 import type {
   Choose,
+  Phase,
   RPSGameState,
 } from "@alicarti/shared/rooms/rockpaperscissor/config";
 import type { CurrentTurn } from ".";
 import { calculateResult } from "./logic";
+import type { ClientDTO } from "@alicarti/shared";
+
+export const initialState = (playerOne: string): RPSGameState => ({
+  phase: "waiting" as Phase,
+  clients: [],
+  playersMap: {
+    one: playerOne,
+    two: undefined,
+  },
+  reversePlayersMap: {},
+  score: {
+    one: 0,
+    two: 0,
+    draws: 0,
+  },
+  hasChosen: {
+    one: false,
+    two: false,
+  },
+});
+
+export function setup(
+  admin: ClientDTO,
+  state = initialState("")
+): RPSGameState {
+  return {
+    ...state,
+    playersMap: {
+      one: admin.socketId,
+      two: undefined,
+    },
+    reversePlayersMap: {
+      [admin.socketId]: "one",
+    },
+    clients: [admin],
+  };
+}
 
 export function start(state: RPSGameState): RPSGameState {
   return {
@@ -57,4 +95,75 @@ export function reveal(
   currentTurn = { one: undefined, two: undefined };
   state.hasChosen = { one: false, two: false };
   return [{ ...state }, { ...currentTurn }];
+}
+
+export function playerJoined(
+  state: RPSGameState,
+  client: ClientDTO
+): RPSGameState {
+  state.clients.push(client);
+
+  if (state.playersMap.two) {
+    return { ...state };
+  }
+
+  state.playersMap.two = client.socketId;
+  state.reversePlayersMap[client.socketId] = "two";
+  state.phase = "ready";
+  return { ...state };
+}
+
+const n = (id: string) => (c: ClientDTO) => c.socketId != id;
+
+export function playerLeft(
+  state: RPSGameState,
+  client: ClientDTO
+): RPSGameState {
+  const leaverId = client.socketId;
+  const clients = state.clients.filter(n(leaverId));
+  // if spectator leaves the game phase should not change
+  if (!state.reversePlayersMap[leaverId]) {
+    return {
+      ...state,
+      clients,
+    };
+  }
+
+  const leavingPlayer = state.playersMap.one === leaverId ? "one" : "two";
+  if (leavingPlayer === "two") {
+    const hasOtherClient = clients.find(
+      (c) => c.socketId != state.playersMap.one
+    );
+
+    const reversePlayersMap: Record<string,"one"|"two"> = {
+      [state.playersMap.one!]: "one",
+    };
+    if (hasOtherClient) {
+      reversePlayersMap[hasOtherClient.socketId] = "two";
+    }
+
+    return {
+      ...state,
+      playersMap: {
+        ...state.playersMap,
+        two: hasOtherClient ? hasOtherClient.socketId : undefined,
+      },
+      reversePlayersMap,
+      clients,
+      phase: hasOtherClient ? "ready" : "waiting",
+    };
+  }
+
+  // if a player leaves the phase could change
+  // if is the admin the one leaving
+  if (leavingPlayer === "one") {
+    return {
+      ...state,
+      phase: "waiting",
+      //TODO: finish
+    };
+  }
+
+  // this should never happen
+  return state;
 }

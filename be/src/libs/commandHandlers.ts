@@ -27,6 +27,7 @@ export function handleRoomCreation(
   const roomTopic = ctx.topics.create({
     name: roomId,
     admin: adminId,
+    adminClient: ws.data,
     type: roomType,
     options: {
       clientsCanPublish: false,

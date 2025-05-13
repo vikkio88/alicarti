@@ -16,27 +16,16 @@ import type { StatefulRoom } from "../StatefulRoom";
 import type { ServerWebSocket } from "bun";
 import type { ServerContext } from "../../servers/websocket";
 import type { TopicConfig } from "../../libs/Topic";
-import { calculateResult } from "./logic";
-import { choose, end, restart, reveal, start } from "./stateTransitions";
-
-const initialState = (playerOne: string): RPSGameState => ({
-  phase: "waiting" as Phase,
-  clients: [],
-  playersMap: {
-    one: playerOne,
-    two: undefined,
-  },
-  reversePlayersMap: {},
-  score: {
-    one: 0,
-    two: 0,
-    draws: 0,
-  },
-  hasChosen: {
-    one: false,
-    two: false,
-  },
-});
+import {
+  choose,
+  end,
+  playerJoined,
+  restart,
+  reveal,
+  setup,
+  start,
+  initialState
+} from "./stateTransitions";
 
 export type RPSRoomConfig = {
   adminId: string;
@@ -56,22 +45,17 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
   }
 
   setup(config: unknown) {
-    const adminId = (config as TopicConfig).admin!;
-    this.state.playersMap.one = adminId;
-    this.state.reversePlayersMap[adminId] = "one";
+    const { adminClient } = config as TopicConfig;
+    this.state = setup(dto(adminClient!));
   }
 
   onJoin(client: Client, ctx: ServerContext): void {
-    this.state.clients.push(dto(client));
+    this.state = playerJoined(this.state, dto(client));
 
-    if (this.state.playersMap.two) {
+    if (!this.state.reversePlayersMap[client.socketId]) {
       ctx.logger(`${client.socketId} joined as spectator`);
-      return;
     }
 
-    this.state.playersMap.two = client.socketId;
-    this.state.reversePlayersMap[client.socketId] = "two";
-    this.state.phase = "ready";
     ctx.server?.publish(this.topicName, stateUpdate(this.state));
   }
 
@@ -124,13 +108,10 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
         break;
       }
       case "reveal": {
-        const [newState, newCurrentTurn] = reveal(
-          this.state,
-          this.currentTurn,
-        );
+        const [newState, newCurrentTurn] = reveal(this.state, this.currentTurn);
         this.state = newState;
         this.currentTurn = newCurrentTurn;
-      
+
         break;
       }
       case "assignRole": {
