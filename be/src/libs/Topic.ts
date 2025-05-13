@@ -12,6 +12,7 @@ export type TopicConfig = {
   name: string;
   type: RoomType;
   admin?: string;
+  adminClient?: Client;
   options: {
     clientsCanPublish: boolean;
   };

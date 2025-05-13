@@ -9,3 +9,11 @@
 
   const { playersMap, clients, isAdmin }: Props = $props();
 </script>
+
+
+<h2>Clients</h2>
+<ul>
+  {#each clients as client}
+    <li>{client.name}</li>
+  {/each}
+</ul>

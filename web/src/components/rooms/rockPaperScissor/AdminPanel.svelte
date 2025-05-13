@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { RPSGameState } from "@alicarti/shared/rooms/rockpaperscissor/config";
   import { connection } from "../../../libs/ws";
+  import Clients from "./Clients.svelte";
 
   type Props = {
     isAdmin: boolean;
@@ -19,6 +20,14 @@
   {#if !isAdmin}
     <!-- This can be used to switch players and spectator in case -->
     <h2>Spectator Mode</h2>
+  {/if}
+
+  {#if gameState.phase === "ready" || gameState.phase === "waiting"}
+    <Clients
+      clients={gameState.clients}
+      playersMap={gameState.reversePlayersMap}
+      {isAdmin}
+    />
   {/if}
   {#if gameState.phase === "ready" || gameState.phase === "over"}
     <button
