@@ -35,15 +35,21 @@ export function handleRoomCreation(
     config: { ...payload.data.config },
   });
   const roomLogic = roomTopic.roomLogic;
-  ctx.clients.joinTopic(roomTopic, ws);
+  const result = ctx.clients.joinTopic(roomTopic, ws);
+
   ctx.logger(
     `\tclient: ${ws.data.socketId} created room ${roomId}, type: ${payload.data.roomType}}`
   );
+  if (result) {
+    success<JoinedRoomResponsePayload<any>>(ws, Commands.CREATE_ROOM, {
+      room: roomTopic.room(),
+      initialState: roomLogic?.state,
+    });
+    return;
+  }
 
-  success<JoinedRoomResponsePayload<any>>(ws, Commands.CREATE_ROOM, {
-    room: roomTopic.room(),
-    initialState: roomLogic?.state,
-  });
+  ctx.logger(`client: ${ws.data.socketId} could not join the room`);
+  failure(ws, Commands.CREATE_ROOM);
 }
 
 export function handleRoomJoining(
@@ -57,18 +63,25 @@ export function handleRoomJoining(
 
   const roomId = payload.data.roomId;
   const roomTopic = ctx.topics.byName(roomId);
+
   if (!roomTopic) {
     return failure(ws, Commands.JOIN_ROOM, { roomId });
   }
 
   const roomLogic = roomTopic.roomLogic;
-  ctx.clients.joinTopic(roomTopic, ws);
-  ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
-  success<JoinedRoomResponsePayload<any>>(ws, Commands.JOIN_ROOM, {
-    room: roomTopic.room(),
-    initialState: roomLogic?.state,
-  });
-  roomLogic?.onJoin(ws.data, ctx);
+  const result = ctx.clients.joinTopic(roomTopic, ws);
+  if (result) {
+    ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
+    success<JoinedRoomResponsePayload<any>>(ws, Commands.JOIN_ROOM, {
+      room: roomTopic.room(),
+      initialState: roomLogic?.state,
+    });
+    roomLogic?.onJoin(ws.data, ctx);
+    return;
+  }
+
+  ctx.logger(`client: ${ws.data.socketId} could not join the room`);
+  failure(ws, Commands.CREATE_ROOM);
 }
 
 export function handleRoomLeaving(

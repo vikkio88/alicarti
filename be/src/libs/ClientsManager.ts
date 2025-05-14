@@ -17,16 +17,27 @@ export class ClientsManager {
     return Object.keys(this.#clients).length;
   }
 
+  /**
+   * This returns whether a client has joined or not a topic
+   * @param topic
+   * @param ws
+   * @returns Boolean
+   */
   joinTopic(topic: Topic, ws: ServerWebSocket<Client>) {
-    topic.join(ws);
+    if (this.#clients[ws.data.socketId].includes(topic.name)) {
+      return false;
+    }
 
+    // Only join if not already in;
+    topic.join(ws);
     // add topic to the list of topics joined  the user
     if (this.#clients[ws.data.socketId]) {
       this.#clients[ws.data.socketId].push(topic.name);
-      return;
+      return true;
     }
 
     this.#clients[ws.data.socketId] = [topic.name];
+    return true;
   }
 
   leaveTopic(topic: Topic, ws: ServerWebSocket<Client>) {
