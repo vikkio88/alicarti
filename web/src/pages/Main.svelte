@@ -5,10 +5,7 @@
     type JoinedRoomResponsePayload,
     type WsMessage,
   } from "@alicarti/shared";
-  import {
-    type Room as JoinedRoom,
-    type Room,
-  } from "@alicarti/shared/rooms";
+  import { type Room as JoinedRoom, type Room } from "@alicarti/shared/rooms";
 
   import { connection } from "../libs/ws";
 
@@ -23,12 +20,19 @@
         case Commands.JOIN_ROOM:
         case Commands.CREATE_ROOM: {
           if (commandResult.success) {
-            const payload = commandResult.data as JoinedRoomResponsePayload<any>;
+            const payload =
+              commandResult.data as JoinedRoomResponsePayload<any>;
             initialState = payload.initialState;
             joinedRoom = payload.room;
             ws.joinRoom(joinedRoom as Room);
+            break;
           }
-          break;
+
+          if (!commandResult.success) {
+            console.error(`could not join the room`, { commandResult });
+            //TODO: Handle rejection maybe with the global toast
+            break;
+          }
         }
         case Commands.LEAVE_ROOM: {
           if (commandResult.success) {
