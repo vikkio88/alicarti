@@ -28,7 +28,7 @@
             class="f1"
             data-tooltip="Join"
             disabled={roomId.length < 3}
-            onclick={() => connection.command(Commands.JOIN_ROOM, { roomId })}
+            type="submit"
           >
             <Icon name="enter" />
           </button>
