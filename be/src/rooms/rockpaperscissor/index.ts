@@ -24,7 +24,8 @@ import {
   reveal,
   setup,
   start,
-  initialState
+  initialState,
+  playerLeft,
 } from "./stateTransitions";
 
 export type RPSRoomConfig = {
@@ -50,7 +51,7 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
   }
 
   onJoin(client: Client, ctx: ServerContext): void {
-    this.state = playerJoined(this.state, dto(client));
+    this.state = playerJoined({ ...this.state }, dto(client));
 
     if (!this.state.reversePlayersMap[client.socketId]) {
       ctx.logger(`${client.socketId} joined as spectator`);
@@ -60,20 +61,11 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
   }
 
   onLeave(client: Client, ctx: ServerContext): void {
-    const leaverId = client.socketId;
-    const leavingPlayer = this.state.reversePlayersMap[leaverId];
-    if (!this.state.playersMap[leavingPlayer]) {
-      ctx.logger(`${leaverId} left the RPS room, but was not a player`);
+    this.state = playerLeft({ ...this.state }, dto(client));
+    if (!this.state.reversePlayersMap[client.socketId]) {
+      ctx.logger(`${client.socketId} left the RPS room, but was not a player`);
       return;
     }
-
-    const remainingPlayerId = (
-      leavingPlayer === "two"
-        ? this.state.playersMap.one
-        : this.state.playersMap.two
-    )!;
-    this.state = initialState(remainingPlayerId);
-    this.state.reversePlayersMap[remainingPlayerId] = "one";
     ctx.server?.publish(this.topicName, stateUpdate(this.state));
   }
 

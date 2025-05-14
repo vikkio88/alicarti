@@ -161,8 +161,15 @@ describe("RPSGame states transitions", () => {
     // admin leaves ->  client3 becomes admin (player one)
     state = playerJoined(state, client3);
     expect(state.clients).toHaveLength(2);
-    expect(state.phase).toBe("ready");
-    //TODO: leave admin
+    state = playerLeft(state, client1);
+    expect(state.clients).toHaveLength(1);
+    expect(state.playersMap.one).toBe(client3.socketId);
+    expect(state.phase).toBe("waiting");
     
+    state = playerJoined(state, client1);
+    expect(state.clients).toHaveLength(2);
+    expect(state.phase).toBe("ready");
+    expect(state.playersMap.one).toBe(client3.socketId)
+    expect(state.playersMap.two).toBe(client1.socketId)
   });
 });

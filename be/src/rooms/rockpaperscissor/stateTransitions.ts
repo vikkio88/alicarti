@@ -101,16 +101,29 @@ export function playerJoined(
   state: RPSGameState,
   client: ClientDTO
 ): RPSGameState {
-  state.clients.push(client);
+  const clients = [...state.clients, client];
 
   if (state.playersMap.two) {
-    return { ...state };
+    return { ...state, clients };
   }
 
   state.playersMap.two = client.socketId;
   state.reversePlayersMap[client.socketId] = "two";
-  state.phase = "ready";
-  return { ...state };
+  const enoughToPlay =
+    Object.values(state.reversePlayersMap).filter(Boolean).length === 2;
+  return {
+    ...state,
+    playersMap: {
+      ...state.playersMap,
+      two: client.socketId,
+    },
+    reversePlayersMap: {
+      ...state.reversePlayersMap,
+      [client.socketId]: "two",
+    },
+    clients,
+    phase: enoughToPlay ? "ready" : "waiting",
+  };
 }
 
 const n = (id: string) => (c: ClientDTO) => c.socketId != id;
@@ -130,12 +143,13 @@ export function playerLeft(
   }
 
   const leavingPlayer = state.playersMap.one === leaverId ? "one" : "two";
+
   if (leavingPlayer === "two") {
     const hasOtherClient = clients.find(
-      (c) => c.socketId != state.playersMap.one
+      (c) => c.socketId != leaverId && c.socketId != state.playersMap.one
     );
 
-    const reversePlayersMap: Record<string,"one"|"two"> = {
+    const reversePlayersMap: Record<string, "one" | "two"> = {
       [state.playersMap.one!]: "one",
     };
     if (hasOtherClient) {
@@ -150,17 +164,34 @@ export function playerLeft(
       },
       reversePlayersMap,
       clients,
+      // if a player leaves the phase could change
       phase: hasOtherClient ? "ready" : "waiting",
     };
   }
 
-  // if a player leaves the phase could change
   // if is the admin the one leaving
   if (leavingPlayer === "one") {
+    const hasOtherClient = clients.find((c) => c.socketId !== leaverId);
+    const newPlayersMap: typeof state.playersMap = {
+      one: undefined,
+      two: undefined,
+    };
+    const reversePlayersMap: Record<string, "one" | "two"> = {};
+
+    if (hasOtherClient) {
+      newPlayersMap.one = hasOtherClient.socketId;
+      reversePlayersMap[hasOtherClient.socketId] = "one";
+    }
+
     return {
       ...state,
-      phase: "waiting",
-      //TODO: finish
+      playersMap: newPlayersMap,
+      reversePlayersMap,
+      clients,
+      phase:
+        Object.values(newPlayersMap).filter(Boolean).length === 2
+          ? "ready"
+          : "waiting",
     };
   }
 
