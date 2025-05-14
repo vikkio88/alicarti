@@ -25,6 +25,7 @@ Here I am trying to recreate and finish the project with bun and svelte5.
     - [ ] Trigger remotely
 - [ ] incremental state update
 - [x] Decide where to put name on client
+- [ ] Check if Client is already in room if it is reject it
 
 ## FE
 - [ ] Global State for Connection and Room mgmt.
@@ -34,4 +35,4 @@ Here I am trying to recreate and finish the project with bun and svelte5.
 - [x] Prevent more than 2 people to join as players
 - [x] Implement game over
 - [ ] Implement better UI for spectator
-- [ ] Handle people leaving
+- [x] Handle people leaving
