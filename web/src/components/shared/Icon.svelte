@@ -8,13 +8,17 @@
     SquarePlusSolid,
     CircleXmarkSolid,
     CopySolid,
+    CrownSolid,
+    EyeSolid,
   } from "svelte-awesome-icons";
   type IconName =
     | "create"
     | "connect"
     | "copy"
+    | "crown"
     | "disconnect"
     | "exit"
+    | "eye"
     | "enter"
     | "x";
   type Props = {
@@ -25,9 +29,11 @@
     create: SquarePlusSolid,
     connect: PlugCircleCheckSolid,
     copy: CopySolid,
+    crown: CrownSolid,
     disconnect: PlugCircleXmarkSolid,
-    exit: DoorOpenSolid,
     enter: DoorClosedSolid,
+    eye: EyeSolid,
+    exit: DoorOpenSolid,
     x: CircleXmarkSolid,
   };
   let { name, size = "18" }: Props = $props();

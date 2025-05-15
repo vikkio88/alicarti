@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Move } from "@alicarti/shared/rooms/rockpaperscissor/config";
-  import Icon from "./Icon.svelte";
+  import Icon from "./MoveIcon.svelte";
   import { onMount } from "svelte";
   let move: Move = $state("rock");
   onMount(() => {

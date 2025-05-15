@@ -5,7 +5,7 @@
     Phase,
     Move,
   } from "@alicarti/shared/rooms/rockpaperscissor/config";
-  import RPSIcon from "./Icon.svelte";
+  import RPSIcon from "./MoveIcon.svelte";
 
   type Props = {
     isPlayer: boolean;

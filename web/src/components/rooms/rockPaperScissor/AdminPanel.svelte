@@ -8,8 +8,9 @@
     gameState: RPSGameState;
     roomId: string;
     everyoneHasChoosen: boolean;
+    selfId: string;
   };
-  let { gameState, roomId, everyoneHasChoosen, isAdmin }: Props = $props();
+  let { gameState, roomId, everyoneHasChoosen, isAdmin, selfId }: Props = $props();
 
   let startHeader = $derived(
     gameState.phase === "over" ? "Restart Game" : "Start Game"
@@ -24,8 +25,10 @@
 
   {#if gameState.phase === "ready" || gameState.phase === "waiting"}
     <Clients
+      {selfId}
       clients={gameState.clients}
-      playersMap={gameState.reversePlayersMap}
+      reversePlayersMap={gameState.reversePlayersMap}
+      playersMap={gameState.playersMap}
       {isAdmin}
     />
   {/if}

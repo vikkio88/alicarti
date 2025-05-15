@@ -68,15 +68,15 @@ export function handleRoomJoining(
     return failure(ws, Commands.JOIN_ROOM, { roomId });
   }
 
-  const roomLogic = roomTopic.roomLogic;
   const result = ctx.clients.joinTopic(roomTopic, ws);
   if (result) {
+    const roomLogic = roomTopic.roomLogic;
+    roomLogic?.onJoin(ws.data, ctx);
     ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
     success<JoinedRoomResponsePayload<any>>(ws, Commands.JOIN_ROOM, {
       room: roomTopic.room(),
       initialState: roomLogic?.state,
     });
-    roomLogic?.onJoin(ws.data, ctx);
     return;
   }
 
