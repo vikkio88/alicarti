@@ -39,6 +39,7 @@ export function onClose(ws: ServerWebSocket<Client>, ctx: ServerContext) {
   const topics = ctx.clients.getClientTopics(ws);
   //TODO: handle the room clear-up from here too
   ctx.topics.getManyByName(topics).forEach((t) => {
+    t.roomLogic?.onLeave(ws.data, ctx);
     const result = ctx.clients.leaveTopic(t, ws);
     if (t.name !== BROADCAST_TOPIC_NAME && result.clientsCount < 1) {
       // if there are no more clients left removing the room
