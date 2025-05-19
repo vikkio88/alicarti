@@ -61,11 +61,11 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
   }
 
   onLeave(client: Client, ctx: ServerContext): void {
-    this.state = playerLeft({ ...this.state }, dto(client));
     if (!this.state.reversePlayersMap[client.socketId]) {
       ctx.logger(`${client.socketId} left the RPS room, but was not a player`);
       return;
     }
+    this.state = playerLeft({ ...this.state }, dto(client));
     ctx.server?.publish(this.topicName, stateUpdate(this.state));
   }
 
