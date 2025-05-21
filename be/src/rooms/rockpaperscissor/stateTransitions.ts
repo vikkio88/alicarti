@@ -170,17 +170,38 @@ export function playerLeft(
   }
 
   // if is the admin the one leaving
+  //TODO: this also needs to check if spectator was there and make it a player 2
   if (leavingPlayer === "one") {
-    const hasOtherClient = clients.find((c) => c.socketId !== leaverId);
+    const remainingClients = clients.filter((c) => c.socketId !== leaverId);
+
     const newPlayersMap: typeof state.playersMap = {
       one: undefined,
       two: undefined,
     };
     const reversePlayersMap: Record<string, "one" | "two"> = {};
 
-    if (hasOtherClient) {
-      newPlayersMap.one = hasOtherClient.socketId;
-      reversePlayersMap[hasOtherClient.socketId] = "one";
+    const oldP2Id = state.playersMap.two;
+
+    const isP2StillPresent = oldP2Id && oldP2Id !== leaverId;
+    const newAdmin = isP2StillPresent
+      ? remainingClients.find((c) => c.socketId === oldP2Id)
+      : remainingClients[0];
+
+    if (newAdmin) {
+      newPlayersMap.one = newAdmin.socketId;
+      reversePlayersMap[newAdmin.socketId] = "one";
+    }
+
+    const newP2 = remainingClients.find(
+      (c) =>
+        c.socketId !== leaverId &&
+        c.socketId !== newPlayersMap.one &&
+        c.socketId !== oldP2Id
+    );
+
+    if (newP2) {
+      newPlayersMap.two = newP2.socketId;
+      reversePlayersMap[newP2.socketId] = "two";
     }
 
     return {

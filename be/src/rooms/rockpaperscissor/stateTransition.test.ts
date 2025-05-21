@@ -139,17 +139,17 @@ describe("RPSGame states transitions", () => {
     // joined 2 players and a spectator
     expect(state.reversePlayersMap[client3.socketId]).toBeUndefined();
     expect(state.clients).toHaveLength(3);
-    
+
     // leave the spectator -> is still ready
     state = playerLeft(state, client3);
     expect(state.clients).toHaveLength(2);
     expect(state.phase).toBe("ready");
-    
+
     // client3 rejoin the spectator -> ready
     state = playerJoined(state, client3);
     expect(state.reversePlayersMap[client3.socketId]).toBeUndefined();
     expect(state.phase).toBe("ready");
-    
+
     // leaves player 2 -> not ready and client3 becomes player2
     state = playerLeft(state, client2);
     expect(state.reversePlayersMap[client3.socketId]).toBe("two");
@@ -165,11 +165,45 @@ describe("RPSGame states transitions", () => {
     expect(state.clients).toHaveLength(1);
     expect(state.playersMap.one).toBe(client3.socketId);
     expect(state.phase).toBe("waiting");
-    
+
     state = playerJoined(state, client1);
     expect(state.clients).toHaveLength(2);
     expect(state.phase).toBe("ready");
-    expect(state.playersMap.one).toBe(client3.socketId)
-    expect(state.playersMap.two).toBe(client1.socketId)
+    expect(state.playersMap.one).toBe(client3.socketId);
+    expect(state.playersMap.two).toBe(client1.socketId);
+  });
+  test("backfix: p2 promotion and spectator to p2", () => {
+    const ogAdmin: ClientDTO = {
+      name: "one",
+      socketId: "1",
+      createdAt: Date.now(),
+    };
+    const ogP2: ClientDTO = {
+      name: "two",
+      socketId: "2",
+      createdAt: Date.now(),
+    };
+    const ogSpectator: ClientDTO = {
+      name: "three",
+      socketId: "3",
+      createdAt: Date.now(),
+    };
+
+    let state = setup(ogAdmin);
+    state = playerJoined(state, ogP2);
+    state = playerJoined(state, ogSpectator);
+
+    //When admin leaves
+    state = playerLeft(state, ogAdmin);
+    // p2 becomes admin
+    expect(state.reversePlayersMap[ogP2.socketId]).toBe("one");
+    // spectator becomes p2
+    expect(state.reversePlayersMap[ogSpectator.socketId]).toBe("two");
+
+    // admin leaves, spectator becomes admin
+    state = playerLeft(state, ogP2);
+    expect(state.reversePlayersMap[ogSpectator.socketId]).toBe("one");
+    expect(state.clients).toHaveLength(1);
+    expect(state.playersMap.two).toBeUndefined();
   });
 });
