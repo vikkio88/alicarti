@@ -8,6 +8,7 @@ import {
   setup,
   playerJoined,
   playerLeft,
+  assignRole,
 } from "./stateTransitions";
 import type {
   RPSGameState,
@@ -101,6 +102,61 @@ describe("RPSGame states transitions", () => {
     expect(updatedState.phase).toBe("display");
     expect(updatedState.result?.winner).toBe("one");
     expect(updatedTurn).toEqual({ one: undefined, two: undefined });
+  });
+
+  it("assigns the correct role if instructed by the admin", () => {
+    const adminClient: ClientDTO = {
+      name: "one",
+      socketId: "1",
+      createdAt: Date.now(),
+    };
+    const client2: ClientDTO = {
+      name: "two",
+      socketId: "2",
+      createdAt: Date.now(),
+    };
+    const client3: ClientDTO = {
+      name: "three",
+      socketId: "3",
+      createdAt: Date.now(),
+    };
+    const base = { ...baseState };
+    let state = setup(adminClient, base);
+    state = playerJoined(state, client2);
+    state = playerJoined(state, client3);
+    expect(state.phase).toBe("ready");
+    expect(state.clients).toHaveLength(3);
+
+    state = assignRole(state, {
+      clientId: client2.socketId,
+      role: "spectator",
+    });
+
+    expect(state.reversePlayersMap[client2.socketId]).toBeUndefined();
+    expect(state.reversePlayersMap[client3.socketId]).toBeUndefined();
+    expect(state.clients).toHaveLength(3);
+    expect(state.playersMap.two).toBeUndefined();
+    expect(state.phase).toBe("waiting");
+
+    state = assignRole(state, {
+      clientId: client3.socketId,
+      role: "two",
+    });
+    expect(state.reversePlayersMap[client3.socketId]).toBe("two");
+    expect(state.reversePlayersMap[client2.socketId]).toBeUndefined();
+    expect(state.clients).toHaveLength(3);
+    expect(state.playersMap.two).toBe(client3.socketId);
+    expect(state.phase).toBe("ready");
+
+    state = assignRole(state, {
+      clientId: "nonExistingId",
+      role: "spectator",
+    });
+    expect(state.reversePlayersMap[client3.socketId]).toBe("two");
+    expect(state.reversePlayersMap[client2.socketId]).toBeUndefined();
+    expect(state.clients).toHaveLength(3);
+    expect(state.playersMap.two).toBe(client3.socketId);
+    expect(state.phase).toBe("ready");
   });
 
   test("joining and leaving the room", () => {

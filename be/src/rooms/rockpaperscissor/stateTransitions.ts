@@ -1,4 +1,5 @@
 import type {
+  AssignedRole,
   Choose,
   Phase,
   RPSGameState,
@@ -95,6 +96,47 @@ export function reveal(
   currentTurn = { one: undefined, two: undefined };
   state.hasChosen = { one: false, two: false };
   return [{ ...state }, { ...currentTurn }];
+}
+
+export function assignRole(
+  state: RPSGameState,
+  assignment: AssignedRole
+): RPSGameState {
+  const { clientId, role } = assignment;
+  // if you are making a player2 a spectator
+  if (role === "spectator" && state.playersMap.two === clientId) {
+    return {
+      ...state,
+      // TODO: maybe make a phase calculator?
+      phase: "waiting",
+      playersMap: {
+        ...state.playersMap,
+        two: undefined,
+      },
+      reversePlayersMap: {
+        [state.playersMap.one!]: "one",
+      },
+    };
+  }
+
+  // if you are making a spectator player 2
+  if (role === "two" && state.reversePlayersMap[clientId] === undefined) {
+    return {
+      ...state,
+      // TODO: maybe make a phase calculator?
+      phase: "ready",
+      playersMap: {
+        ...state.playersMap,
+        two: clientId,
+      },
+      reversePlayersMap: {
+        [state.playersMap.one!]: "one",
+        [clientId]: "two",
+      },
+    };
+  }
+
+  return { ...state };
 }
 
 export function playerJoined(

@@ -52,5 +52,5 @@ export type Choose = {
 };
 export type AssignedRole = {
   clientId: string;
-  role: "spectator" | "playerTwo";
+  role: "spectator" | "two";
 };

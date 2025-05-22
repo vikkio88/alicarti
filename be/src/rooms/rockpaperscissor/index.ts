@@ -26,6 +26,7 @@ import {
   start,
   initialState,
   playerLeft,
+  assignRole,
 } from "./stateTransitions";
 
 export type RPSRoomConfig = {
@@ -108,8 +109,7 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
       }
       case "assignRole": {
         const assignment = action.data as AssignedRole;
-        console.log(assignment);
-
+        this.state = assignRole(this.state, assignment);
         break;
       }
       default: {
@@ -119,3 +119,4 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
     return this.state;
   }
 }
+
