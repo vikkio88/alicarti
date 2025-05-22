@@ -12,6 +12,7 @@
   import AdminPanel from "./AdminPanel.svelte";
   import Spinner from "./Spinner.svelte";
   import RoomInfo from "../../shared/RoomInfo.svelte";
+  import RpsIcon from "./RpsIcon.svelte";
 
   let { room, self, initialState }: RoomProps<RPSGameState> = $props();
   let gameState = $state(initialState);
@@ -52,6 +53,12 @@
     {/if}
 
     {#if gameState.phase === "ready"}
+      {#if !isAdmin && isPlayer}
+        <h2 class="mg">
+          <RpsIcon name="two" size="24" />
+          Player Two
+        </h2>
+      {/if}
       <h1>Ready!</h1>
       <Spinner />
     {/if}
@@ -86,16 +93,14 @@
         </button>
       </div>
     {/if}
-    {#if (hasOneChoosen || hasTwoChoosen) && !everyoneHasChoosen}
-      <div class="mg">
+    <div class="mg">
+      {#if (hasOneChoosen || hasTwoChoosen) && !everyoneHasChoosen}
         {#if isAdmin && hasTwoChoosen}
           <h2>Player two has choosen</h2>
         {:else if !isAdmin && hasOneChoosen}
           <h2>Player one has choosen</h2>
         {/if}
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
-
-  <!-- <pre>{JSON.stringify(gameState, null, 2)}</pre> -->
 </main>

@@ -2,6 +2,7 @@
   import type { RPSGameState } from "@alicarti/shared/rooms/rockpaperscissor/config";
   import { connection } from "../../../libs/ws";
   import Clients from "./Clients.svelte";
+  import Icon from "../../shared/Icon.svelte";
 
   type Props = {
     isAdmin: boolean;
@@ -10,7 +11,8 @@
     everyoneHasChoosen: boolean;
     selfId: string;
   };
-  let { gameState, roomId, everyoneHasChoosen, isAdmin, selfId }: Props = $props();
+  let { gameState, roomId, everyoneHasChoosen, isAdmin, selfId }: Props =
+    $props();
 
   let startHeader = $derived(
     gameState.phase === "over" ? "Restart Game" : "Start Game"
@@ -20,12 +22,13 @@
 <div class="f cc mg">
   {#if !isAdmin}
     <!-- This can be used to switch players and spectator in case -->
-    <h2>Spectator Mode</h2>
+    <h2><Icon name="eye" size="24" /> Spectator</h2>
   {/if}
 
   {#if gameState.phase === "ready" || gameState.phase === "waiting"}
     <Clients
       {selfId}
+      {roomId}
       clients={gameState.clients}
       reversePlayersMap={gameState.reversePlayersMap}
       playersMap={gameState.playersMap}

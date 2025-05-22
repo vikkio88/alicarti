@@ -2,6 +2,8 @@
   import type { ClientDTO } from "@alicarti/shared";
   import Icon from "../../shared/Icon.svelte";
   import RPSIcon from "./RpsIcon.svelte";
+  import { connection } from "../../../libs/ws";
+  import type { AssignedRole } from "@alicarti/shared/rooms/rockpaperscissor/config";
 
   type RevMap = Record<string, "one" | "two">;
   type PMap = Record<"one" | "two", string | undefined>;
@@ -12,19 +14,30 @@
     clients: ClientDTO[];
     selfId: string;
     isAdmin: boolean;
+    roomId: string;
   };
 
-  const { playersMap, clients, isAdmin, selfId, reversePlayersMap }: Props =
-    $props();
+  const {
+    playersMap,
+    clients,
+    isAdmin,
+    selfId,
+    reversePlayersMap,
+    roomId,
+  }: Props = $props();
   let adminId = $derived(playersMap.one);
 
   let isSpectator = (id: string) => reversePlayersMap[id] === undefined;
 
   const canChange = (client: ClientDTO, reversePlayersMap: RevMap) =>
     reversePlayersMap[client.socketId] !== "one";
-  const change = (client: ClientDTO) => console.log(client);
-  const changeAction = (client: ClientDTO) =>
-    isSpectator(client.socketId) ? "Player" : "Spectator";
+  const change = (client: ClientDTO) => {
+    const role = isSpectator(client.socketId) ? "two" : "spectator";
+    connection.action(roomId, "assignRole", {
+      clientId: client.socketId,
+      role,
+    } as AssignedRole);
+  };
 </script>
 
 <ul>
@@ -33,7 +46,11 @@
       {#if isAdmin && canChange(client, reversePlayersMap)}
         <div>
           <button class="small transparent" onclick={() => change(client)}>
-            {changeAction(client)}
+            {#if isSpectator(client.socketId)}
+              <Icon name="gamepad" />
+            {:else}
+              <Icon name="eye" />
+            {/if}
           </button>
         </div>
       {/if}
