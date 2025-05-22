@@ -31,6 +31,7 @@ export function handleRoomCreation(
     type: roomType,
     options: {
       clientsCanPublish: false,
+      // maxClients: 2, SETUP MAX CLIENTS
     },
     config: { ...payload.data.config },
   });
@@ -40,7 +41,7 @@ export function handleRoomCreation(
   ctx.logger(
     `\tclient: ${ws.data.socketId} created room ${roomId}, type: ${payload.data.roomType}}`
   );
-  if (result) {
+  if (result.success) {
     success<JoinedRoomResponsePayload<any>>(ws, Commands.CREATE_ROOM, {
       room: roomTopic.room(),
       initialState: roomLogic?.state,
@@ -48,7 +49,11 @@ export function handleRoomCreation(
     return;
   }
 
-  ctx.logger(`client: ${ws.data.socketId} could not join the room`);
+  ctx.logger(
+    `client: ${ws.data.socketId} could not join the room, reason: "${
+      result.reason ?? "Unknown"
+    }"`
+  );
   failure(ws, Commands.CREATE_ROOM);
 }
 
@@ -69,7 +74,7 @@ export function handleRoomJoining(
   }
 
   const result = ctx.clients.joinTopic(roomTopic, ws);
-  if (result) {
+  if (result.success) {
     const roomLogic = roomTopic.roomLogic;
     roomLogic?.onJoin(ws.data, ctx);
     ctx.logger(`\tclient: ${ws.data.socketId} joined room ${roomId}`);
@@ -80,8 +85,12 @@ export function handleRoomJoining(
     return;
   }
 
-  ctx.logger(`client: ${ws.data.socketId} could not join the room`);
-  failure(ws, Commands.CREATE_ROOM);
+  ctx.logger(
+    `client: ${ws.data.socketId} could not join the room, reason: "${
+      result.reason ?? "Unknown"
+    }"`
+  );
+  failure(ws, Commands.JOIN_ROOM);
 }
 
 export function handleRoomLeaving(

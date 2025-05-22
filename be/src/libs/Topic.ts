@@ -4,8 +4,10 @@ import { RoomTypes, type Room, type RoomType } from "@alicarti/shared/rooms";
 import type { StatefulRoom } from "../rooms/StatefulRoom";
 import { RoomFactory } from "../rooms/RoomFactory";
 
-type TopicClientsUpdate = {
+export type TopicClientsChangeResult = {
+  success: boolean;
   clientsCount: number;
+  reason?: string;
 };
 
 export type TopicConfig = {
@@ -15,6 +17,7 @@ export type TopicConfig = {
   adminClient?: Client;
   options: {
     clientsCanPublish: boolean;
+    maxClients?: number;
   };
   config?: any;
 };
@@ -24,13 +27,16 @@ export class Topic {
   #name: string;
   #type: RoomType;
   #clients: string[];
-  #clientsCanPublish: boolean;
+  #options: {
+    clientsCanPublish: boolean;
+    maxClients?: number;
+  };
   roomLogic?: StatefulRoom<any>;
 
   constructor(config: TopicConfig) {
     const {
       name,
-      options: { clientsCanPublish },
+      options,
       type = RoomTypes.broadcast,
       admin = undefined,
     } = config;
@@ -38,7 +44,7 @@ export class Topic {
     this.#name = name;
     this.#type = type;
     this.#admin = admin;
-    this.#clientsCanPublish = clientsCanPublish;
+    this.#options = options;
   }
 
   setRoomLogic<T>(room: StatefulRoom<T>) {
@@ -57,21 +63,34 @@ export class Topic {
     return this.#type;
   }
 
-  join(ws: ServerWebSocket<Client>): TopicClientsUpdate {
+  join(ws: ServerWebSocket<Client>): TopicClientsChangeResult {
+    if (
+      this.#options.maxClients &&
+      this.clientsCount + 1 > this.#options.maxClients
+    ) {
+      return {
+        success: false,
+        clientsCount: this.clientsCount,
+        reason: `Room does not accept more clients, limit ${
+          this.#options.maxClients
+        }`,
+      };
+    }
+
     ws.subscribe(this.name);
     this.#clients.push(ws.data.socketId);
-    return { clientsCount: this.#clients.length };
+    return { clientsCount: this.#clients.length, success: true };
   }
 
-  leave(ws: ServerWebSocket<Client>): TopicClientsUpdate {
+  leave(ws: ServerWebSocket<Client>): TopicClientsChangeResult {
     ws.unsubscribe(this.name);
     this.#clients = this.#clients.filter((s) => s != ws.data.socketId);
 
-    return { clientsCount: this.#clients.length };
+    return { clientsCount: this.#clients.length, success: true };
   }
 
   publish(ws: Server, message: string, isServer: boolean = true) {
-    if (isServer || this.#clientsCanPublish) {
+    if (isServer || this.#options.clientsCanPublish) {
       ws.publish(this.name, message);
     }
   }

@@ -1,6 +1,6 @@
 import type { ServerWebSocket } from "bun";
 import type { Client, CommandInfo } from "@alicarti/shared";
-import type { Topic } from "./Topic";
+import type { Topic, TopicClientsChangeResult } from "./Topic";
 import { clientId } from "./idGenerators";
 import type { RoomType } from "@alicarti/shared/rooms";
 import { r } from "./singletons";
@@ -21,26 +21,41 @@ export class ClientsManager {
    * This returns whether a client has joined or not a topic
    * @param topic
    * @param ws
-   * @returns Boolean
+   * @returns TopicClientsChangeResult
    */
-  joinTopic(topic: Topic, ws: ServerWebSocket<Client>) {
+  joinTopic(
+    topic: Topic,
+    ws: ServerWebSocket<Client>
+  ): TopicClientsChangeResult {
     if (this.#clients[ws.data.socketId].includes(topic.name)) {
-      return false;
+      return {
+        success: false,
+        clientsCount: -1,
+        reason: `${ws.data.socketId} already in ${topic.name}`,
+      };
     }
 
-    // Only join if not already in;
-    topic.join(ws);
+    // Only join if not already in
+    const result = topic.join(ws);
+
+    // this would get false if there is a max client setup and joining would exceede it
+    if (!result.success) {
+      return result;
+    }
     // add topic to the list of topics joined  the user
     if (this.#clients[ws.data.socketId]) {
       this.#clients[ws.data.socketId].push(topic.name);
-      return true;
+      return result;
     }
 
     this.#clients[ws.data.socketId] = [topic.name];
-    return true;
+    return result;
   }
 
-  leaveTopic(topic: Topic, ws: ServerWebSocket<Client>) {
+  leaveTopic(
+    topic: Topic,
+    ws: ServerWebSocket<Client>
+  ): TopicClientsChangeResult {
     const result = topic.leave(ws);
 
     // remove topic from list of topics a client joined

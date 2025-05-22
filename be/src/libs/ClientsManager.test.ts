@@ -11,11 +11,11 @@ class MockTopic extends Topic {
   join(ws: ServerWebSocket<Client>) {
     this.subscribers.add(ws);
 
-    return { clientsCount: this.subscribers.size };
+    return { clientsCount: this.subscribers.size, success: true };
   }
   leave(ws: ServerWebSocket<Client>) {
     this.subscribers.delete(ws);
-    return { clientsCount: this.subscribers.size };
+    return { clientsCount: this.subscribers.size, success: true };
   }
 }
 
