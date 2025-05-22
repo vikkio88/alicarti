@@ -9,6 +9,7 @@
     CircleXmarkSolid,
     CopySolid,
     CrownSolid,
+    GamepadSolid,
     EyeSolid,
   } from "svelte-awesome-icons";
   type IconName =
@@ -20,6 +21,7 @@
     | "exit"
     | "eye"
     | "enter"
+    | "gamepad"
     | "x";
   type Props = {
     name: IconName;
@@ -34,6 +36,7 @@
     enter: DoorClosedSolid,
     eye: EyeSolid,
     exit: DoorOpenSolid,
+    gamepad: GamepadSolid,
     x: CircleXmarkSolid,
   };
   let { name, size = "18" }: Props = $props();
