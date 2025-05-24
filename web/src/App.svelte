@@ -5,7 +5,6 @@
   import Nav from "./components/Nav.svelte";
   import Icon from "./components/shared/Icon.svelte";
   import Snackbar from "./components/Snackbar.svelte";
-  import { uiState } from "./store/ui.svelte";
   onMount(() => () => ws.disconnect());
 </script>
 
