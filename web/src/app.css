@@ -8,3 +8,50 @@ body {
   flex: 1;
   display: flex;
 }
+
+.f {
+  display: flex;
+}
+
+.c {
+  flex-direction: column;
+}
+
+.r {
+  flex-direction: row;
+}
+
+.fcc {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.frc {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.f1 {
+  flex: 1;
+}
+
+.g_5 {
+  gap: .5rem;
+}
+
+.g {
+  gap: 1rem;
+}
+
+
+.g2 {
+  gap: 2rem;
+}
+
+.fw {
+  width: 100%;
+}

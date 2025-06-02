@@ -19,49 +19,45 @@
   );
 </script>
 
-<div class="f cc mg">
-  {#if !isAdmin}
-    <!-- This can be used to switch players and spectator in case -->
-    <h2><Icon name="eye" size="24" /> Spectator</h2>
-  {/if}
+{#if !isAdmin}
+  <!-- This can be used to switch players and spectator in case -->
+  <h2><Icon name="eye" size="24" /> Spectator</h2>
+{/if}
 
-  {#if gameState.phase === "ready" || gameState.phase === "waiting"}
-    <Clients
-      {selfId}
-      {roomId}
-      clients={gameState.clients}
-      reversePlayersMap={gameState.reversePlayersMap}
-      playersMap={gameState.playersMap}
-      {isAdmin}
-    />
-  {/if}
-  {#if gameState.phase === "ready" || gameState.phase === "over"}
-    <button
+{#if gameState.phase === "ready" || gameState.phase === "waiting"}
+  <Clients
+    {selfId}
+    {roomId}
+    clients={gameState.clients}
+    reversePlayersMap={gameState.reversePlayersMap}
+    playersMap={gameState.playersMap}
+    {isAdmin}
+  />
+{/if}
+{#if gameState.phase === "ready" || gameState.phase === "over"}
+  <button
     class="extra"
-      onclick={() =>
-        connection.action(
-          roomId,
-          gameState.phase === "over" ? "restart" : "start"
-        )}
-    >
-      {startHeader}
-    </button>
-  {/if}
+    onclick={() =>
+      connection.action(
+        roomId,
+        gameState.phase === "over" ? "restart" : "start"
+      )}
+  >
+    {startHeader}
+  </button>
+{/if}
 
-  {#if gameState.phase === "display"}
-    <div class="f rc">
-      <button onclick={() => connection.action(roomId, "start")}>
-        Next Round
-      </button>
-      <button onclick={() => connection.action(roomId, "end")}>
-        End Game
-      </button>
-    </div>
-  {/if}
-
-  {#if gameState.phase === "choosing" && everyoneHasChoosen}
-    <button class="extra" onclick={() => connection.action(roomId, "reveal")}>
-      Reveal
+{#if gameState.phase === "display"}
+  <div class="f rc">
+    <button onclick={() => connection.action(roomId, "start")}>
+      Next Round
     </button>
-  {/if}
-</div>
+    <button onclick={() => connection.action(roomId, "end")}> End Game </button>
+  </div>
+{/if}
+
+{#if gameState.phase === "choosing" && everyoneHasChoosen}
+  <button class="extra" onclick={() => connection.action(roomId, "reveal")}>
+    Reveal
+  </button>
+{/if}

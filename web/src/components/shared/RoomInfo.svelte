@@ -15,7 +15,7 @@
 </script>
 
 <article>
-  <div class="row middle-align">
+  <div class="fcc g">
     Room Id
     <h2>
       {room.id}

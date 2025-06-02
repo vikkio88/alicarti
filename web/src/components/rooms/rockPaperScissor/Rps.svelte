@@ -34,7 +34,7 @@
   let everyoneHasChoosen = $derived(hasOneChoosen && hasTwoChoosen);
 </script>
 
-<main class="responsive rps">
+<main class="responsive fcc">
   <div>
     {#if isAdmin || !isPlayer}
       <AdminPanel
@@ -53,7 +53,7 @@
     <article class="middle-align center-align medium">
       {#if gameState.phase === "waiting"}
         <div>
-          <h1>Waiting for one more player...</h1>
+          <h2>Waiting for one more player...</h2>
           <Spinner />
         </div>
       {/if}
@@ -111,21 +111,3 @@
     </article>
   </div>
 </main>
-
-<style>
-  .rps {
-    display: flex;
-  }
-
-  .clients {
-    flex: 4;
-  }
-
-  .roomInfo {
-    flex: 1;
-  }
-
-  .gameState {
-    flex: 8;
-  }
-</style>
