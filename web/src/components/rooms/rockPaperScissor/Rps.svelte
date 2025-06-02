@@ -34,8 +34,8 @@
   let everyoneHasChoosen = $derived(hasOneChoosen && hasTwoChoosen);
 </script>
 
-<main class="c">
-  <div class="f1 f cc">
+<main class="responsive rps">
+  <div>
     {#if isAdmin || !isPlayer}
       <AdminPanel
         {gameState}
@@ -48,59 +48,84 @@
 
     {#if gameState.phase === "waiting"}
       <RoomInfo {room} />
-      <h1>Waiting for one more player...</h1>
-      <Spinner />
     {/if}
 
-    {#if gameState.phase === "ready"}
-      {#if !isAdmin && isPlayer}
-        <h2 class="mg">
-          <RpsIcon name="two" size="24" />
-          Player Two
-        </h2>
+    <article class="middle-align center-align medium">
+      {#if gameState.phase === "waiting"}
+        <div>
+          <h1>Waiting for one more player...</h1>
+          <Spinner />
+        </div>
       {/if}
-      <h1>Ready!</h1>
-      <Spinner />
-    {/if}
 
-    {#if !isAdmin && everyoneHasChoosen && gameState.phase !== "display"}
-      <h1>Waiting for reveal...</h1>
-      <Spinner />
-    {/if}
-
-    {#if gameState.phase === "display" || gameState.phase === "over" || !isPlayer}
-      <div class="f rc">
-        <Result
-          {isPlayer}
-          self={gameState.reversePlayersMap[self.socketId]}
-          score={gameState.score}
-          result={gameState.result}
-          phase={gameState.phase}
-        />
-      </div>
-    {/if}
-
-    {#if isPlayer && gameState.phase === "choosing" && !everyoneHasChoosen}
-      <div class="f rc g_5">
-        <button onclick={() => choose("rock")}>
-          <MoveIcon move={"rock"} />
-        </button>
-        <button onclick={() => choose("paper")}>
-          <MoveIcon move={"paper"} />
-        </button>
-        <button onclick={() => choose("scissor")}>
-          <MoveIcon move={"scissor"} />
-        </button>
-      </div>
-    {/if}
-    <div class="mg">
-      {#if (hasOneChoosen || hasTwoChoosen) && !everyoneHasChoosen}
-        {#if isAdmin && hasTwoChoosen}
-          <h2>Player two has choosen</h2>
-        {:else if !isAdmin && hasOneChoosen}
-          <h2>Player one has choosen</h2>
+      {#if gameState.phase === "ready"}
+        {#if !isAdmin && isPlayer}
+          <h2>
+            <RpsIcon name="two" size="24" />
+            Player Two
+          </h2>
         {/if}
+        <h1>Ready!</h1>
+        <Spinner />
       {/if}
-    </div>
+
+      {#if !isAdmin && everyoneHasChoosen && gameState.phase !== "display"}
+        <h1>Waiting for reveal...</h1>
+        <Spinner />
+      {/if}
+
+      {#if gameState.phase === "display" || gameState.phase === "over" || !isPlayer}
+        <div class="f rc">
+          <Result
+            {isPlayer}
+            self={gameState.reversePlayersMap[self.socketId]}
+            score={gameState.score}
+            result={gameState.result}
+            phase={gameState.phase}
+          />
+        </div>
+      {/if}
+
+      {#if isPlayer && gameState.phase === "choosing" && !everyoneHasChoosen}
+        <div class="f rc g_5">
+          <button onclick={() => choose("rock")}>
+            <MoveIcon move={"rock"} />
+          </button>
+          <button onclick={() => choose("paper")}>
+            <MoveIcon move={"paper"} />
+          </button>
+          <button onclick={() => choose("scissor")}>
+            <MoveIcon move={"scissor"} />
+          </button>
+        </div>
+      {/if}
+      <div>
+        {#if (hasOneChoosen || hasTwoChoosen) && !everyoneHasChoosen}
+          {#if isAdmin && hasTwoChoosen}
+            <h2>Player two has choosen</h2>
+          {:else if !isAdmin && hasOneChoosen}
+            <h2>Player one has choosen</h2>
+          {/if}
+        {/if}
+      </div>
+    </article>
   </div>
 </main>
+
+<style>
+  .rps {
+    display: flex;
+  }
+
+  .clients {
+    flex: 4;
+  }
+
+  .roomInfo {
+    flex: 1;
+  }
+
+  .gameState {
+    flex: 8;
+  }
+</style>
