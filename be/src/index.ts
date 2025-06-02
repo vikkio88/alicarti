@@ -1,5 +1,5 @@
 import { type Client } from "@alicarti/shared";
-import { generateStaticServe } from "./servers/static";
+import staticServe from "./servers/static";
 import { websocketUpgrade } from "./servers/upgrade";
 import { Topic, TopicManager } from "./libs/Topic";
 import { ClientsManager } from "./libs/ClientsManager";
@@ -34,21 +34,8 @@ const ctx: ServerContext = {
   logger: wsConfig.log,
 };
 
-const base = await generateStaticServe("./static/", "", {
-  "/api/health-check": new Response("All good!"),
-});
-const staticServe = await generateStaticServe(
-  "./static/assets",
-  "assets",
-  base
-);
-
-const server = Bun.serve<
-  Client,
-  Awaited<ReturnType<typeof generateStaticServe>>
->({
+const server = Bun.serve<Client, Record<`/${string}`, Response>>({
   port,
-  //TODO: make this generated on build
   static: staticServe,
   websocket: {
     async message(ws, msg) {

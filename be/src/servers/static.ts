@@ -66,3 +66,14 @@ export async function generateStaticServe(
   }
   return serve;
 }
+
+const staticRoutes = await generateStaticServe("./static/", "", {
+  "/api/health-check": new Response("All good!"),
+});
+const staticServe = await generateStaticServe(
+  "./static/assets",
+  "assets",
+  staticRoutes
+);
+
+export default staticServe;
