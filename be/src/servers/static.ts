@@ -1,23 +1,68 @@
-export const staticServe: Record<`/${string}`, Response> = {
+import { Glob } from "bun";
+import path from "path";
+
+export const base: Record<`/${string}`, Response> = {
   "/api/health-check": new Response("All good!"),
-  "/": new Response(await Bun.file("./static/index.html").bytes(), {
-    headers: {
-      "Content-Type": "text/html",
-    },
-  }),
-  "/assets/index.js": new Response(await Bun.file("./static/assets/index.js").bytes(), {
-    headers: {
-      "Content-Type": "text/javascript",
-    },
-  }),
-  "/assets/index.css": new Response(await Bun.file("./static/assets/index.css").bytes(), {
-    headers: {
-      "Content-Type": "text/css",
-    },
-  }),
-  "/style.css": new Response(await Bun.file("./static/style.css").bytes(), {
-    headers: {
-      "Content-Type": "text/css",
-    },
-  }),
 };
+
+export async function generateStaticServe(
+  directory: string,
+  mappedUri: string,
+  base: Record<`/${string}`, Response> = {}
+) {
+  const serve: Record<`/${string}`, Response> = { ...base };
+  const globHtml = new Glob(`*.html`);
+  for (const file of globHtml.scanSync(directory)) {
+    const bytes = await Bun.file(`${directory}/${file}`).bytes();
+
+    const mappedHtml = (
+      file === "index.html" ? "/" : path.join("/", mappedUri, file)
+    ) as `/${string}`;
+
+    serve[mappedHtml] = new Response(bytes, {
+      headers: {
+        "Content-Type": "text/html",
+      },
+    });
+  }
+
+  const globCss = new Glob(`*.css`);
+  for (const file of globCss.scanSync(directory)) {
+    const bytes = await Bun.file(`${directory}/${file}`).bytes();
+    serve[path.join("/", mappedUri, file) as `/${string}`] = new Response(
+      bytes,
+      {
+        headers: {
+          "Content-Type": "text/css",
+        },
+      }
+    );
+  }
+
+  const globJs = new Glob(`*.js`);
+  for (const file of globJs.scanSync(directory)) {
+    const bytes = await Bun.file(`${directory}/${file}`).bytes();
+    serve[path.join("/", mappedUri, file) as `/${string}`] = new Response(
+      bytes,
+      {
+        headers: {
+          "Content-Type": "text/javascript",
+        },
+      }
+    );
+  }
+
+  const globWoff2 = new Glob(`*.woff2`);
+  for (const file of globWoff2.scanSync(directory)) {
+    const bytes = await Bun.file(`${directory}/${file}`).bytes();
+    serve[path.join("/", mappedUri, file) as `/${string}`] = new Response(
+      bytes,
+      {
+        headers: {
+          "Content-Type": "font/woff2",
+        },
+      }
+    );
+  }
+  return serve;
+}

@@ -40,36 +40,38 @@
   };
 </script>
 
-<ul>
-  {#each clients as client}
-    <li class:me={selfId === client.socketId} class="brd">
-      {#if isAdmin && canChange(client, reversePlayersMap)}
+<article>
+  <ul class="list border">
+    {#each clients as client}
+      <li class:me={selfId === client.socketId} class="brd">
+        {#if isAdmin && canChange(client, reversePlayersMap)}
+          <div>
+            <button class="small small-round" onclick={() => change(client)}>
+              {#if isSpectator(client.socketId)}
+                <Icon name="gamepad" />
+              {:else}
+                <Icon name="eye" />
+              {/if}
+            </button>
+          </div>
+        {/if}
+        {client.name}
         <div>
-          <button class="small transparent" onclick={() => change(client)}>
-            {#if isSpectator(client.socketId)}
-              <Icon name="gamepad" />
-            {:else}
-              <Icon name="eye" />
-            {/if}
-          </button>
+          {#if client.socketId === adminId}
+            <Icon name="crown" />
+          {/if}
+          {#if isSpectator(client.socketId)}
+            <Icon name="eye" />
+          {:else if reversePlayersMap[client.socketId] === "one"}
+            <RPSIcon name="one" />
+          {:else}
+            <RPSIcon name="two" />
+          {/if}
         </div>
-      {/if}
-      {client.name}
-      <div>
-        {#if client.socketId === adminId}
-          <Icon name="crown" />
-        {/if}
-        {#if isSpectator(client.socketId)}
-          <Icon name="eye" />
-        {:else if reversePlayersMap[client.socketId] === "one"}
-          <RPSIcon name="one" />
-        {:else}
-          <RPSIcon name="two" />
-        {/if}
-      </div>
-    </li>
-  {/each}
-</ul>
+      </li>
+    {/each}
+  </ul>
+</article>
 
 <style>
   ul {

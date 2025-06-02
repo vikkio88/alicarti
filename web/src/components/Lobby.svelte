@@ -11,72 +11,93 @@
   let showJoin = $state(false);
 </script>
 
-<main>
-  <div class="f1 f cc g">
-    <div class="f rc mg g_5">
-      {#if showJoin}
-        <form
-          class="f rc mg g_5"
-          onsubmit={(e) => {
-            e.preventDefault();
-            if (roomId.length < 3) return;
-            connection.command(Commands.JOIN_ROOM, { roomId });
-          }}
-        >
-          <input type="text" bind:value={roomId} placeholder="Room id" />
-          <button
-            class="f1"
-            data-tooltip="Join"
-            disabled={roomId.length < 3}
-            type="submit"
-          >
-            <Icon name="enter" />
-          </button>
-        </form>
-      {/if}
-      <button
-        class="f r g_5"
-        data-tooltip={!showJoin ? "Join Room" : "Cancel"}
-        onclick={() => (showJoin = !showJoin)}
-      >
+<main class="responsive">
+  <article class="medium middle-align center-align">
+    <div>
+      <div class="row join" class:showJoin={!showJoin}>
         {#if showJoin}
-          <Icon name="x" />
-        {:else}
-          <Icon name="enter" /> Room
+          <form
+            onsubmit={(e) => {
+              e.preventDefault();
+              if (roomId.length < 3) return;
+              connection.command(Commands.JOIN_ROOM, { roomId });
+            }}
+          >
+            <div class="field">
+              <input
+                name="roomId"
+                type="text"
+                bind:value={roomId}
+                placeholder="Room Id"
+              />
+            </div>
+            <button class="f1" disabled={roomId.length < 3} type="submit">
+              <div class="tooltip">Join</div>
+              <Icon name="enter" />
+            </button>
+          </form>
         {/if}
-      </button>
-    </div>
-    <div class="f r g_5">
-      <button
-        class="f rc g_5"
-        disabled={!canCreateRoom}
-        onclick={() =>
-          connection.command(Commands.CREATE_ROOM, {
-            roomType,
-          })}
-      >
-        <Icon name="create" /> Room
-      </button>
-      <div class="f cc">
-        <label for="roomType">Room Type</label>
-        <select class="roomTypeSelect f1" name="roomType" bind:value={roomType}>
-          <option>{RoomTypes.chat}</option>
-          <option>{RoomTypes.echo}</option>
-          <option>{RoomTypes.rockPaperScissor}</option>
-        </select>
+        <button onclick={() => (showJoin = !showJoin)}>
+          {#if showJoin}
+            <Icon name="x" />
+            <div class="tooltip">Cancel</div>
+          {:else}
+            <Icon name="enter" /> Room
+            <div class="tooltip right">Join Room</div>
+          {/if}
+        </button>
+      </div>
+
+      <div class="row create">
+        <fieldset>
+          <div class="row">
+            <div class="field suffix border large">
+              <span class="helper">Room Type</span>
+              <select
+                bind:value={roomType}
+              >
+                <option>{RoomTypes.chat}</option>
+                <option>{RoomTypes.echo}</option>
+                <option>{RoomTypes.rockPaperScissor}</option>
+              </select>
+              <i>arrow_drop_down</i>
+            </div>
+          </div>
+          <div class="row right-align">
+            <button
+              disabled={!canCreateRoom}
+              onclick={() =>
+                connection.command(Commands.CREATE_ROOM, {
+                  roomType,
+                })}
+            >
+              <Icon name="create" /> Room
+            </button>
+          </div>
+        </fieldset>
       </div>
     </div>
-  </div>
+  </article>
 </main>
 
 <style>
-  input[type="text"] {
-    text-align: center;
+  form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
   }
-  .roomTypeSelect {
-    min-width: 150px;
-    padding: 1rem 0.5rem;
-    text-align: center;
-    font-size: 1.1rem;
+
+  .join {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .showJoin {
+    display: block;
+    padding-left: 0.5rem;
   }
 </style>

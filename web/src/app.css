@@ -8,21 +8,3 @@ body {
   flex: 1;
   display: flex;
 }
-
-main {
-  flex: 1;
-  margin-top: 4rem;
-  padding: 20px;
-  display: flex;
-}
-
-/* Overrides */
-button.none {
-  background-color: var(--main-bg-color);
-  color: var(--main-font-color);
-}
-
-button.none:hover {
-  background-color: var(--main-bg-color);
-  color: var(--main-font-color);
-}

@@ -37,6 +37,7 @@
   {/if}
   {#if gameState.phase === "ready" || gameState.phase === "over"}
     <button
+    class="extra"
       onclick={() =>
         connection.action(
           roomId,
@@ -59,7 +60,7 @@
   {/if}
 
   {#if gameState.phase === "choosing" && everyoneHasChoosen}
-    <button onclick={() => connection.action(roomId, "reveal")}>
+    <button class="extra" onclick={() => connection.action(roomId, "reveal")}>
       Reveal
     </button>
   {/if}

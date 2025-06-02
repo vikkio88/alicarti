@@ -43,4 +43,6 @@
   let Ico = map[name];
 </script>
 
-<Ico {size} />
+<i>
+  <Ico {size} />
+</i>

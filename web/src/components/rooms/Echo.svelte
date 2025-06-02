@@ -27,17 +27,22 @@
   };
 </script>
 
-<main class="c">
-  <h1>Echo Room</h1>
-  <form onsubmit={shout}>
-    <input type="text" bind:value={msg} placeholder="Message to echo" />
-  </form>
-  <h2>Echos</h2>
-  <ul>
-    {#each roomState.messages as message}
-      <li>{message}</li>
-    {/each}
-  </ul>
+<main>
+  <article>
+    <h2>Echo Room</h2>
+    <form onsubmit={shout}>
+      <div class="field border">
+        <label for="message">Message to echo</label>
+        <input type="text" bind:value={msg} name="message" autocomplete="off" />
+      </div>
+    </form>
+    <h3>Previous Echoes</h3>
+    <ul>
+      {#each roomState.messages as message}
+        <li>{message}</li>
+      {/each}
+    </ul>
+  </article>
 </main>
 
 <style>

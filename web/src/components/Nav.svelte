@@ -14,67 +14,54 @@
   let showName = $state(true);
 </script>
 
-<div class="top" class:withItems={Boolean(ws.socketId)}>
-  <div>
+<header>
+  <nav>
     {#if ws.roomId}
-      <button
-        class="small"
-        onclick={() => {
-          connection.command(Commands.LEAVE_ROOM, { roomId: ws.roomId });
-        }}
-      >
-        <Icon name="exit" />
-      </button>
-      <button
-        class="n-btn"
-        onclick={() =>
-          copyToClipboard(ws.roomId ?? "", () =>
-            uiState.snackMessage("Copied to Clipboard")
-          )}
-      >
-        {ws.roomId}
-      </button>
+      <div class="left-align">
+        <button
+          onclick={() => {
+            connection.command(Commands.LEAVE_ROOM, { roomId: ws.roomId });
+          }}
+        >
+          <div class="tooltip bottom">Leave Room</div>
+          <Icon name="exit" />
+        </button>
+        <button
+          class="border small-round"
+          onclick={() =>
+            copyToClipboard(ws.roomId ?? "", () =>
+              uiState.snackMessage("Copied to Clipboard")
+            )}
+        >
+          {ws.roomId}
+          <div class="tooltip bottom">Room Id</div>
+        </button>
+      </div>
     {/if}
-  </div>
 
-  <div>
-    {#if ws.socketId}
-      <button class="n-btn" onclick={() => (showName = !showName)}>
-        {#if showName}
-          {ws.displayName}
-        {:else}
-          {ws.socketId}
-        {/if}
-      </button>
-      <button class="small" onclick={disconnect}>
-        <Icon name="disconnect" />
-      </button>
-    {/if}
-  </div>
-</div>
+    <div class="max"></div>
+
+    <div>
+      {#if ws.socketId}
+        <button
+          class="border small-round"
+          onclick={() => (showName = !showName)}
+        >
+          {#if showName}
+            {ws.displayName}
+          {:else}
+            {ws.socketId}
+          {/if}
+          <div class="tooltip bottom">Client Id</div>
+        </button>
+        <button class="small" onclick={disconnect}>
+          <Icon name="disconnect" />
+          <div class="tooltip bottom">Disconnect</div>
+        </button>
+      {/if}
+    </div>
+  </nav>
+</header>
 
 <style>
-  .top {
-    position: absolute;
-    top: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 1rem;
-  }
-
-  .withItems {
-    border-bottom: var(--borders);
-    border-color: var(--main-bg-faint-color);
-    background-color: var(--main-bg-faint-color);
-  }
-
-  .top > div {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
 </style>
