@@ -21,6 +21,14 @@ body {
   flex-direction: row;
 }
 
+.aic {
+  align-items: center;
+}
+
+.jcc {
+  justify-content: center;
+}
+
 .fcc {
   display: flex;
   flex-direction: column;
@@ -39,19 +47,39 @@ body {
   flex: 1;
 }
 
+.fgrow > * {
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
 .g_5 {
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 .g {
   gap: 1rem;
 }
 
-
 .g2 {
   gap: 2rem;
 }
 
+.spb {
+  justify-content: space-between;
+}
+
+.spa {
+  justify-content: space-around;
+}
+
 .fw {
   width: 100%;
+}
+
+.pd {
+  padding: 1rem;
+}
+
+.mg {
+  margin: 1rem;
 }
