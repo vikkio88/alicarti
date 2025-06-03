@@ -21,7 +21,9 @@
 
 {#if !isAdmin}
   <!-- This can be used to switch players and spectator in case -->
-  <h2><Icon name="eye" size="24" /> Spectator</h2>
+  <div class="fcc pd">
+    <h2><Icon name="eye" size="24" /> Spectator</h2>
+  </div>
 {/if}
 
 {#if gameState.phase === "ready" || gameState.phase === "waiting"}
@@ -35,29 +37,33 @@
   />
 {/if}
 {#if gameState.phase === "ready" || gameState.phase === "over"}
-  <button
-    class="extra"
-    onclick={() =>
-      connection.action(
-        roomId,
-        gameState.phase === "over" ? "restart" : "start"
-      )}
-  >
-    {startHeader}
-  </button>
+  <div class="fcc mg">
+    <button
+      class="extra"
+      onclick={() =>
+        connection.action(
+          roomId,
+          gameState.phase === "over" ? "restart" : "start"
+        )}
+    >
+      {startHeader}
+    </button>
+  </div>
 {/if}
 
 {#if gameState.phase === "display"}
-  <div class="f rc">
-    <button onclick={() => connection.action(roomId, "start")}>
+  <div class="frc mg">
+    <button class="extra" onclick={() => connection.action(roomId, "start")}>
       Next Round
     </button>
-    <button onclick={() => connection.action(roomId, "end")}> End Game </button>
+    <button class="extra" onclick={() => connection.action(roomId, "end")}> End Game </button>
   </div>
 {/if}
 
 {#if gameState.phase === "choosing" && everyoneHasChoosen}
-  <button class="extra" onclick={() => connection.action(roomId, "reveal")}>
-    Reveal
-  </button>
+  <div class="f1 fcc">
+    <button class="extra" onclick={() => connection.action(roomId, "reveal")}>
+      Reveal
+    </button>
+  </div>
 {/if}

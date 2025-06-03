@@ -49,8 +49,10 @@
             <button class="small small-round" onclick={() => change(client)}>
               {#if isSpectator(client.socketId)}
                 <Icon name="gamepad" />
-              {:else}
+                <div class="tooltip right">Make Player</div>
+                {:else}
                 <Icon name="eye" />
+                <div class="tooltip right">Make Spectator</div>
               {/if}
             </button>
           </div>
