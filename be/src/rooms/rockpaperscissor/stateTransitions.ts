@@ -47,6 +47,7 @@ export function setup(
 export function start(state: RPSGameState): RPSGameState {
   return {
     ...state,
+    result: undefined,
     phase: "choosing",
   };
 }
@@ -55,6 +56,7 @@ export function start(state: RPSGameState): RPSGameState {
 export function restart(state: RPSGameState): RPSGameState {
   return {
     ...start(state),
+    result: undefined,
     score: { one: 0, two: 0, draws: 0 },
   };
 }

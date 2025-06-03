@@ -82,6 +82,7 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
       }
       case "restart": {
         this.state = restart(this.state);
+        this.currentTurn = { one: undefined, two: undefined };
         break;
       }
       case "end": {
@@ -119,4 +120,3 @@ export class RPSRoom implements StatefulRoom<RPSGameState> {
     return this.state;
   }
 }
-
