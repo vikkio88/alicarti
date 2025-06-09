@@ -2,14 +2,14 @@
   import { uiState } from "../store/ui.svelte";
 </script>
 
-<div class="snackbar" class:show={uiState.snackbar}>
+<div class="snackbarx" class:show={uiState.snackbar}>
   {#if uiState.snackbar}
     {uiState.snackbar.message}
   {/if}
 </div>
 
 <style>
-  .snackbar {
+  .snackbarx {
     visibility: hidden;
     min-width: 250px;
     margin-left: -125px;
@@ -25,9 +25,7 @@
   }
   .show {
     visibility: visible;
-    animation:
-      fadein 0.2s;
-      
+    animation: fadein 0.3s;
   }
 
   @keyframes fadein {
