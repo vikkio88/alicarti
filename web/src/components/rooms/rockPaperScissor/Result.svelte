@@ -60,7 +60,7 @@
     <div class="result">
       {#if result.draw}
         <h2 class="neutral">Draw</h2>
-        Ì
+      
       {:else if isPlayer}
         {#if result.winner === self}
           <h2 class="win">You Win</h2>
