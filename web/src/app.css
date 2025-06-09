@@ -9,20 +9,77 @@ body {
   display: flex;
 }
 
-main {
-  flex: 1;
-  margin-top: 4rem;
-  padding: 20px;
+.f {
   display: flex;
 }
 
-/* Overrides */
-button.none {
-  background-color: var(--main-bg-color);
-  color: var(--main-font-color);
+.c {
+  flex-direction: column;
 }
 
-button.none:hover {
-  background-color: var(--main-bg-color);
-  color: var(--main-font-color);
+.r {
+  flex-direction: row;
+}
+
+.aic {
+  align-items: center;
+}
+
+.jcc {
+  justify-content: center;
+}
+
+.fcc {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.frc {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.f1 {
+  flex: 1;
+}
+
+.fgrow > * {
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.g_5 {
+  gap: 0.5rem;
+}
+
+.g {
+  gap: 1rem;
+}
+
+.g2 {
+  gap: 2rem;
+}
+
+.spb {
+  justify-content: space-between;
+}
+
+.spa {
+  justify-content: space-around;
+}
+
+.fw {
+  width: 100%;
+}
+
+.pd {
+  padding: 1rem;
+}
+
+.mg {
+  margin: 1rem;
 }

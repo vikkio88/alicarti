@@ -12,10 +12,11 @@
 {#if ws.isConnected}
   <Main />
 {:else}
-  <main>
-    <div class="f1 f cc">
-      <button data-tooltip="Connect" onclick={() => ws.connect()}><Icon name="connect" /> </button>
-    </div>
+  <main class="responsive middle-align center-align">
+    <button onclick={() => ws.connect()}>
+      <div class="tooltip">Connect</div>
+      <Icon name="connect" />
+    </button>
   </main>
 {/if}
 <Snackbar />

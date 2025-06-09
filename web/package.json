@@ -2,7 +2,8 @@
   "name": "@alicarti/web",
   "version": "0.0.0",
   "dependencies": {
-    "@alicarti/shared": "workspace:*"
+    "@alicarti/shared": "workspace:*",
+    "beercss": "^3.11.11"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",

@@ -1,5 +1,5 @@
 import { type Client } from "@alicarti/shared";
-import { staticServe } from "./servers/static";
+import staticServe from "./servers/static";
 import { websocketUpgrade } from "./servers/upgrade";
 import { Topic, TopicManager } from "./libs/Topic";
 import { ClientsManager } from "./libs/ClientsManager";
@@ -34,7 +34,7 @@ const ctx: ServerContext = {
   logger: wsConfig.log,
 };
 
-const server = Bun.serve<Client, typeof staticServe>({
+const server = Bun.serve<Client, Record<`/${string}`, Response>>({
   port,
   static: staticServe,
   websocket: {

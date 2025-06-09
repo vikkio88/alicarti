@@ -10,21 +10,21 @@
 
   const { room }: Props = $props();
   function copy() {
-    copyToClipboard(room.id, () => uiState.snackMessage("Room Id copied."));
+    copyToClipboard(room.id, () => uiState.snackMessage("Room Id copied.", 2));
   }
 </script>
 
-<div class="f rc pd g">
-  <div class="f cc">
+<article>
+  <div class="fcc g">
     Room Id
-    <h1>
+    <h2>
       {room.id}
-    </h1>
+    </h2>
+    <button class="border small-round" onclick={copy}>
+      <Icon name="copy" />
+    </button>
   </div>
-  <button class="transparent" onclick={copy}>
-    <Icon name="copy" />
-  </button>
-</div>
+</article>
 
 <style>
 </style>

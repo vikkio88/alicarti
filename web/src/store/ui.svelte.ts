@@ -10,7 +10,7 @@ class UiState {
   get snackbar() {
     return this.#snackbar;
   }
-  snackMessage(message: string, timeoutSeconds = 1) {
+  snackMessage(message: string, timeoutSeconds = 2) {
     if (this.#snackbar) {
       return;
     }

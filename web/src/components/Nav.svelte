@@ -14,67 +14,54 @@
   let showName = $state(true);
 </script>
 
-<div class="top" class:withItems={Boolean(ws.socketId)}>
-  <div>
-    {#if ws.roomId}
+<nav class="f r spb pd">
+  {#if ws.roomId}
+    <div>
       <button
-        class="small"
         onclick={() => {
           connection.command(Commands.LEAVE_ROOM, { roomId: ws.roomId });
         }}
       >
+        <div class="tooltip bottom">Leave Room</div>
         <Icon name="exit" />
       </button>
       <button
-        class="n-btn"
+        class="border small-round"
         onclick={() =>
           copyToClipboard(ws.roomId ?? "", () =>
             uiState.snackMessage("Copied to Clipboard")
           )}
       >
         {ws.roomId}
+        <div class="tooltip bottom">Room Id</div>
       </button>
-    {/if}
-  </div>
+    </div>
+  {/if}
 
   <div>
     {#if ws.socketId}
-      <button class="n-btn" onclick={() => (showName = !showName)}>
+      <button class="border small-round" onclick={() => (showName = !showName)}>
         {#if showName}
           {ws.displayName}
         {:else}
           {ws.socketId}
         {/if}
+        <div class="tooltip bottom">Client Id</div>
       </button>
       <button class="small" onclick={disconnect}>
         <Icon name="disconnect" />
+        <div class="tooltip bottom">Disconnect</div>
       </button>
     {/if}
   </div>
-</div>
+</nav>
 
 <style>
-  .top {
-    position: absolute;
-    top: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 1rem;
-  }
-
-  .withItems {
-    border-bottom: var(--borders);
-    border-color: var(--main-bg-faint-color);
-    background-color: var(--main-bg-faint-color);
-  }
-
-  .top > div {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  @media (max-width: 600px) {
+    nav {
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 0;
+    }
   }
 </style>

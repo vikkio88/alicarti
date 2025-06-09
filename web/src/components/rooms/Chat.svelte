@@ -21,7 +21,7 @@
   };
 </script>
 
-<main class="c">
+<main class="responsive">
   <h1>Chat Room</h1>
   <h2>{room.id}</h2>
   <div class="chat">
@@ -40,16 +40,21 @@
     </ul>
   </div>
   <form onsubmit={sendMessage}>
-    <input type="text" placeholder="Message..." bind:value={message} />
+    <div class="field border">
+      <input type="text" placeholder="Message..." bind:value={message} />
+    </div>
   </form>
 </main>
 
 <style>
+  main {
+    display: flex;
+    flex-direction: column;
+  }
   .chat {
     flex: 8;
     padding: 2rem;
-    background: var(--main-font-color);
-    color: var(--main-bg-color);
+    background-color: var(--background);
   }
 
   .me {
