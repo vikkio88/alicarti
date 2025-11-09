@@ -1,10 +1,10 @@
 <script lang="ts">
   import { Commands } from "@alicarti/shared";
+  import { copyToClipboard } from "../libs/clipboard";
   import { connection } from "../libs/ws";
+  import { uiState } from "../store/ui.svelte";
   import { ws } from "../store/wsState.svelte";
   import Icon from "./shared/Icon.svelte";
-  import { copyToClipboard } from "../libs/clipboard";
-  import { uiState } from "../store/ui.svelte";
 
   const disconnect = () => {
     connection.close();
@@ -63,5 +63,9 @@
       flex-direction: column-reverse;
       padding: 0;
     }
+  }
+
+  nav {
+      margin-bottom: 4rem;
   }
 </style>
