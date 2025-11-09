@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { canCreateRoom as check } from "../libs/utils";
-  import { RoomTypes } from "@alicarti/shared/rooms";
-  import { connection } from "../libs/ws";
   import { Commands } from "@alicarti/shared";
+  import { RoomTypes } from "@alicarti/shared/rooms";
+  import { canCreateRoom as check } from "../libs/utils";
+  import { connection } from "../libs/ws";
   import Icon from "./shared/Icon.svelte";
   let roomId: string = $state("");
   let roomType: string = $state(RoomTypes.rockPaperScissor);
@@ -88,3 +88,11 @@
     {/if}
   </div>
 </main>
+
+<style>
+  main {
+      display: flex;
+      flex-direction: column;
+      padding: 2rem;
+  }
+</style>
